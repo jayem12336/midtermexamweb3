@@ -3,6 +3,7 @@ const theme = {
         type: 'light',
         primary: {
             main: '#1E1F20',
+            disable: '#2C2F31'
         },
         secondary: {
             main: '#26CE8D',
@@ -18,8 +19,8 @@ const theme = {
     colors: {
         navButtonHover: "#26CE8D",
         textColor: "#FFF",
-        cardColor: "#1E1F20"
-
+        cardColor: "#1E1F20",
+        footerColor: "#161717"
     },
     typography: {
         fontFamily: [

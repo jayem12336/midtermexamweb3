@@ -110,7 +110,8 @@ const style = {
     tabtextStyle: {
         color: "white",
         textTransform: "none",
-        fontSize: 16
+        fontSize: 16,
+        marginLeft: .5
     },
     indicator: {
         top: "0px",
@@ -201,10 +202,8 @@ export default function NavBar() {
                                     indicatorColor="secondary"
                                     aria-label="secondary tabs example"
                                     TabIndicatorProps={{
-                                        sx: style.indicator
+                                        sx: style.indicator,
                                     }}
-
-
                                 >
                                     <Tab value="one" label="Student List" sx={style.tabtextStyle} />
                                     <Tab value="two" label="Student Evaluation" sx={style.tabtextStyle} />
