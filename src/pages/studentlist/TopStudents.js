@@ -25,7 +25,7 @@ const style = {
         width: 250,
         borderRadius: 2,
         backgroundColor: (theme) => theme.colors.cardColor,
-        border: `1px solid gray`,
+        border: '1px solid #2e2c2c'
     },
 }
 export default function TopStudents( {studName, numReviews, numRating}) {

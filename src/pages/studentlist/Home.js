@@ -1,5 +1,5 @@
-import React from 'react'
-import NavBar from '../../components/navbar/NavBar'
+import React from 'react';
+import NavBar from '../../components/navbar/NavBar';
 
 import {
     Box,
@@ -26,12 +26,6 @@ const style = {
     },
     columnContainer: {
         padding: 2,
-    },
-    cardStyle: {
-        width: 250,
-        borderRadius: 2,
-        backgroundColor: (theme) => theme.colors.cardColor,
-        border: `1px solid gray`,
     },
     titleStyle: {
         marginLeft: 7,
