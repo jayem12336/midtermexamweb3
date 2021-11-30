@@ -21,6 +21,10 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { BiShare } from 'react-icons/bi';
 
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import StudentInfo from './StudentInfo';
+
 const style = {
     //helper
     marginStyle: {
@@ -56,8 +60,13 @@ const style = {
         marginBottom: 2
     },
     floatChild: {
-        width: '50%',
+        width: {
+            xs: "100%",
+            sm: "100%",
+            md: "50%",
+        },
         float: 'left',
+
     },
     textStyle: {
         color: (theme) => theme.colors.textColor,
@@ -68,7 +77,7 @@ const style = {
         borderRadius: 3,
         marginTop: -1,
         height: 30,
-        marginBottom: .5,
+        marginBottom: 1,
         "&:hover": {
             backgroundColor: '#26CE8D'
         }
@@ -78,14 +87,20 @@ const style = {
         borderRadius: 3,
         marginTop: -1,
         height: 30,
-        marginBottom: .5,
+        marginBottom: 1,
         "&:hover": {
             backgroundColor: '#E03E65'
         }
     },
     studNameStyle: {
         color: (theme) => theme.colors.textColor,
-        fontSize: 30
+        fontSize: 30,
+        marginLeft: {
+            xs: 0,
+            sm: 22,
+            md: 12
+        },
+
     },
     studSectionStyle: {
         color: "#D1D4C9",
@@ -97,6 +112,11 @@ const style = {
         flexDirection: 'row',
         display: 'flex',
         width: '100%',
+        marginLeft: {
+            xs: 0,
+            sm: 10,
+            md: 12
+        }
     },
     idStyle: {
         color: "#62666D",
@@ -113,6 +133,10 @@ const style = {
     sectionStyle: {
         color: "#62666D",
         fontSize: 15,
+        marginLeft: {
+            xs: 1,
+            md: 0
+        }
     },
     reviewStyle: {
         color: "#62666D",
@@ -124,12 +148,16 @@ const style = {
         flexDirection: 'row',
         display: 'flex',
         width: '100%',
-        marginTop: 4
+        marginTop: 4,
+        marginLeft: {
+            xs: 0,
+            md: 12
+        }
     },
     linkStyle: {
         color: "#62666D",
         fontSize: 15,
-        cursor: 'pointer'
+        cursor: 'pointer',
     },
     section2: {
         padding: '50px 0',
@@ -215,6 +243,18 @@ const style = {
         color: (theme) => theme.colors.navButtonHover,
         fontSize: 32,
         marginTop: -.5
+    },
+    arrowLeftContainer: {
+        backgroundColor: 'transparent',
+        border: '2px solid #2C2F31',
+        borderRadius: 2,
+        marginRight: 2
+    },
+    arrowRightContainer: {
+        backgroundColor: 'transparent',
+        border: '2px solid #2C2F31',
+        borderRadius: 2,
+        marginLeft: 2
     }
 }
 export default function StudentEvaluation() {
@@ -230,117 +270,7 @@ export default function StudentEvaluation() {
             <NavBar tabvalue={0} />
             <Box component={Grid} container justifyContent="center" sx={style.section1}>
                 <Box sx={style.studInfoContainer}>
-                    <Box style={style.floatChild} sx={{ padding: 5 }}>
-                        <Box component={Grid} container justifyContent="center">
-                            <Box component={Grid} container justifyContent="center">
-                                <Avatar variant="square" sx={style.avatarStyle} />
-                            </Box>
-                            <Box component={Grid} container justifyContent="center">
-                                <Rating
-                                    name="simple-controlled"
-                                    value={value}
-                                    sx={{ color: (theme) => theme.colors.navButtonHover, marginTop: 2, fontSize: 40 }}
-                                    onChange={(event, newValue) => {
-                                        setValue(newValue);
-                                    }}
-                                />
-                            </Box>
-                        </Box>
-                        <Box component={Grid} container justifyContent="center">
-                            <Typography sx={style.textStyle}> 3.0 Overall Rating </Typography>
-                            <Typography sx={{ ...style.textStyle, ...style.marginTextLeft }}> 2000 Reviews </Typography>
-                        </Box>
-                    </Box>
-                    <Box style={style.floatChild}>
-                        <Box component={Grid} container justifyContent="flex-start" sx={{ paddingBottom: 4, marginTop: -1 }}>
-                            <Typography sx={style.studNameStyle}> Hipolito, Jonathan J.</Typography>
-                            <Typography sx={style.studSectionStyle}> BSIT 4B </Typography>
-                        </Box>
-                        <Box sx={style.bodyStyle}>
-                            <Box component={Grid} container justifyContent="flex-start">
-                                <Typography variant="body2" color="textPrimary"> Gender: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography sx={style.sectionStyle}> Male </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography variant="body2" color="textPrimary" sx={{ marginLeft: 10 }}>  Teamwork: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                                <Button variant="outlined" sx={style.passRateStyle}>4.0</Button>
-                            </Box>
-                        </Box>
-                        <Box sx={style.bodyStyle}>
-                            <Box component={Grid} container justifyContent="flex-start">
-                                <Typography variant="body2" color="textPrimary"> Birthday: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography sx={style.sectionStyle}> 02-24-1997 </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography variant="body2" color="textPrimary" sx={{ marginLeft: 8 }}>Creativity: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                                <Button variant="outlined" sx={style.passRateStyle}>3.0</Button>
-                            </Box>
-                        </Box>
-                        <Box sx={style.bodyStyle}>
-                            <Box component={Grid} container justifyContent="flex-start">
-                                <Typography variant="body2" color="textPrimary"> Address: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography sx={style.sectionStyle}> Bustos Bulacan </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography variant="body2" color="textPrimary" sx={{ marginLeft: 7 }}>Adaptability: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                                <Button variant="outlined" sx={style.notPassRateStyle}>1.0</Button>
-                            </Box>
-                        </Box>
-                        <Box sx={style.bodyStyle}>
-                            <Box component={Grid} container justifyContent="flex-start">
-                                <Typography variant="body2" color="textPrimary"> Nickname: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography sx={style.sectionStyle}> Nathan </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography variant="body2" color="textPrimary" sx={{ marginLeft: 7 }}>Leadership: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                                <Button variant="outlined" sx={style.notPassRateStyle}>2.0</Button>
-                            </Box>
-                        </Box>
-                        <Box sx={style.bodyStyle}>
-                            <Box component={Grid} container justifyContent="flex-start">
-                                <Typography variant="body2" color="textPrimary"> Skills / Languages: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography sx={style.sectionStyle}> Javascript, Python </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end">
-                                <Typography variant="body2" color="textPrimary" sx={{ marginLeft: 7 }}>Persuasion: </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                                <Button variant="outlined" sx={style.passRateStyle}>3.0</Button>
-                            </Box>
-                        </Box>
-                        <Box sx={style.footerStyle}>
-                            <Box component={Grid} container justifyContent="flex-start">
-                                <Typography sx={style.linkStyle}> Github </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-start">
-                                <Typography sx={{ ...style.linkStyle, ...style.linkColorStyle }}> Facebook </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-start">
-                                <Typography sx={{ ...style.linkStyle, ...style.linkColorStyle }}> Linkedin </Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-start">
-                                <Typography sx={style.linkStyle}> Twitter </Typography>
-                            </Box>
-                        </Box>
-                    </Box>
+                    <StudentInfo />
                 </Box>
                 <Box component={Grid} container justifyContent="center" sx={style.section2}>
                     <Box component={Grid} container justifyContent="center">
@@ -449,7 +379,7 @@ export default function StudentEvaluation() {
                         onChange={(e) => setInputValue(e.target.value)}
                         fullWidth
                         minRows={4}
-                        sx={{borderBottom: 'none', marginBottom: 3}}
+                        sx={{ borderBottom: 'none', marginBottom: 3 }}
                     />
                     <Button variant="contained" sx={style.submitBtn}>Submit</Button>
                 </Box>
@@ -567,9 +497,23 @@ export default function StudentEvaluation() {
                                 : ""
                             }
                         </Box>
-                        <Box sx={{ marginTop: 3 }}>
+                        <Box sx={{ marginTop: 5 }}>
                             <Box component={Grid} container justifyContent="center">
-                                <Typography sx={style.nameStyle}> Pagination Here </Typography>
+                                <Avatar variant="square" sx={style.arrowLeftContainer}>
+                                    <ArrowBackIcon style={{ color:"#2C2F31", fontSize: 30 }} />
+                                </Avatar>
+                                <Typography sx={{ color:"#D1D4C9", marginTop: .8, marginRight: 1}}>Page</Typography>
+                                <TextField 
+                                sx={{ marginTop: -.2}} 
+                                inputProps={{
+                                    sx: { height: 10, width: 20, backgroundColor: '#090807'}
+                                }}
+                                defaultValue={1}
+                                />
+                                <Typography sx={{ color:"#D1D4C9", marginTop: .8, marginLeft: 1}}> of 100</Typography>
+                                <Avatar variant="square" sx={style.arrowRightContainer}>
+                                    <ArrowForwardIcon style={{ color:"#2C2F31", fontSize: 30 }} />
+                                </Avatar>
                             </Box>
                         </Box>
                     </Box>
@@ -577,6 +521,6 @@ export default function StudentEvaluation() {
             </Box>
             <Footer />
 
-        </Box>
+        </Box >
     )
 }

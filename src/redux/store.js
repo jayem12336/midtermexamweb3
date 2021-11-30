@@ -2,12 +2,14 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 
 import studentReducer from './reducers/studentReducer';
+import userReducer from './reducers/userReducer';
 
 const initianState = {};
 const middleware = [thunk];
 
 const reducers = combineReducers({
     stud : studentReducer,
+    user: userReducer
 })
 
 const composeEnhancer = typeof window == "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__

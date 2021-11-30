@@ -28,8 +28,14 @@ const style = {
         padding: 2,
     },
     titleStyle: {
-        marginLeft: 7,
-        marginBottom: 1
+        marginLeft: {
+            md: 7
+        },
+        marginBottom: 1,
+        justifyContent: {
+            xs: "center",
+            md: "flex-start"
+        },
     }
 }
 export default function Home() {

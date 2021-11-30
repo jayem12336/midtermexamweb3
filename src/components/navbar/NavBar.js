@@ -3,7 +3,6 @@ import React from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import {
     Box,
-    Button,
     AppBar,
     Toolbar,
     Typography,
@@ -15,26 +14,33 @@ import {
     InputBase
 } from '@mui/material';
 
+import { useSelector, useDispatch } from 'react-redux';
+
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
 
-import { Link as ReactLink } from 'react-router-dom';
 import Scroll from "react-scroll";
 import { useTheme } from '@mui/material/styles';
 import GridViewIcon from '@mui/icons-material/GridView';
 import SearchIcon from '@mui/icons-material/Search';
 
 import accountprofile from '../../assets/img/png/accountcircle.png';
-
-import FacebookIcon from '@mui/icons-material/Facebook';
-import TwitterIcon from '@mui/icons-material/Twitter';
 import GoogleIcon from '@mui/icons-material/Google';
 
-const ScrollLink = Scroll.Link;
+import SideDrawer from './drawerComponent/SideDrawer';
+
+import { FiFacebook } from 'react-icons/fi';
+
+import { RiTwitterLine } from 'react-icons/ri';
+
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+
+import { useHistory } from 'react-router-dom';
+import { logoutInitiate } from '../../redux/actions/userAction';
 
 const style = {
     accountButton: {
@@ -50,7 +56,10 @@ const style = {
         width: "50px",
     },
     title: {
-        fontSize: '25px',
+        fontSize: {
+            xs:'22px',
+            md:'25px'
+        },
         marginLeft: 1,
         color: (theme) => theme.colors.navButton
     },
@@ -101,11 +110,7 @@ const style = {
 
     },
     iconContainer: {
-        marginLeft: 4
-    },
-    iconStyleMenu: {
-        fontSize: 50,
-        marginLeft: 1
+        display: "flex"
     },
     tabtextStyle: {
         color: "white",
@@ -116,7 +121,7 @@ const style = {
     indicator: {
         top: "0px",
 
-    }
+    },
 
 };
 
@@ -163,8 +168,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function NavBar() {
 
+    const history = useHistory();
+
+    const dispatch = useDispatch();
 
     const [value, setValue] = React.useState('one');
+
+    const { user } = useSelector((state) => state);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -183,6 +193,34 @@ export default function NavBar() {
 
     const matchMD = useMediaQuery(theme.breakpoints.up('md'));
 
+    const btnSignInWithGoogle = () => {
+        const provider = new GoogleAuthProvider()
+        const auth = getAuth();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                // The signed-in user info.
+                const user = result.user;
+                window.location.reload(false);
+                // ...
+            }).catch((error) => {
+                // Handle Errors here.
+                const errorMessage = error.message;
+                alert(errorMessage);
+                // The email of the user's account used.
+                const email = error.email;
+                alert(email);
+                // The AuthCredential type that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                // ...
+                alert(credential);
+            });
+    }
+
+    const btnLogout = () => {
+        dispatch(logoutInitiate(history));
+    }
+
     return (
         <Box component={Grid} container justifyContent="center">
             <AppBar position="fixed">
@@ -193,31 +231,42 @@ export default function NavBar() {
                         </Link>
                         <GridViewIcon sx={style.iconStyle} />
                         <Box component="span" sx={style.linkContainer} />
+
                         <Box component="span" sx={{ flexGrow: 1 }}>
-                            <Grid container justifyContent="center">
-                                <Tabs
-                                    value={value}
-                                    onChange={handleChange}
-                                    textColor="secondary"
-                                    indicatorColor="secondary"
-                                    aria-label="secondary tabs example"
-                                    TabIndicatorProps={{
-                                        sx: style.indicator,
-                                    }}
-                                >
-                                    <Tab value="one" label="Student List" sx={style.tabtextStyle} />
-                                    <Tab value="two" label="Student Evaluation" sx={style.tabtextStyle} />
-                                    <Tab value="three" label="Blog" sx={style.tabtextStyle} />
-                                </Tabs>
-                            </Grid>
+                            {!matchMD ? <SideDrawer /> :
+                                <>
+                                    <Grid container justifyContent="center">
+                                        <Tabs
+                                            value={value}
+                                            onChange={handleChange}
+                                            textColor="secondary"
+                                            indicatorColor="secondary"
+                                            aria-label="secondary tabs example"
+                                            TabIndicatorProps={{
+                                                sx: style.indicator,
+                                            }}
+                                        >
+                                            <Tab value="one" label="Student List" sx={style.tabtextStyle} />
+                                            <Tab value="two" label="Student Evaluation" sx={style.tabtextStyle} />
+                                            <Tab value="three" label="Blog" sx={style.tabtextStyle} />
+                                        </Tabs>
+                                    </Grid>
+                                </>
+                            }
                         </Box>
                         <IconButton
                             id="fade-button"
                             aria-controls="fade-menu"
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
-                            onClick={handleClick}>
-                            <Avatar src={accountprofile} />
+                            onClick={handleClick}
+                        >
+                            <Avatar src={accountprofile} sx={{
+                                marginLeft: {
+                                    xs: -6,
+                                    md: 0
+                                }
+                            }} />
                         </IconButton>
                         <Menu
                             id="fade-menu"
@@ -244,20 +293,42 @@ export default function NavBar() {
                                     Sign In</Typography>
                                 <Typography variant="subtitle1">Sign in to review and rate students</Typography>
                                 <Box component={Grid} justifyContent="center" alignItems="center" sx={style.iconContainer}>
-                                    <FacebookIcon sx={style.iconStyleMenu} />
-                                    <TwitterIcon sx={style.iconStyleMenu} />
-                                    <GoogleIcon sx={style.iconStyleMenu} />
+                                    <Avatar variant="square" sx={{
+                                        backgroundColor: "#4267B2", borderRadius: 2,
+                                        marginLeft: 2,
+                                    }}>
+                                        <FiFacebook color="#FFFFFF" />
+                                    </Avatar>
+                                    <Avatar variant="square" sx={{
+                                        backgroundColor: "#00ACEE", borderRadius: 2,
+                                        marginLeft: 2,
+                                    }}>
+                                        <RiTwitterLine color="#FFFFFF" />
+                                    </Avatar>
+                                    <Avatar variant="square" sx={{
+                                        backgroundColor: "#4285F4", borderRadius: 2,
+                                        marginLeft: 2,
+                                        cursor: "pointer"
+                                    }}
+                                        onClick={btnSignInWithGoogle}>
+                                        <GoogleIcon color="#FFFFFF" />
+                                    </Avatar>
+
                                 </Box>
                             </Box>
                         </Menu>
-                        <Search>
-                            <SearchIconWrapper>
-                                <SearchIcon />
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                                inputProps={{ 'aria-label': 'search' }}
-                            />
-                        </Search>
+                        {!matchMD ? <SearchIcon sx={{ fontSize: 40 }} /> :
+                            <>
+                                <Search>
+                                    <SearchIconWrapper>
+                                        <SearchIcon />
+                                    </SearchIconWrapper>
+                                    <StyledInputBase
+                                        inputProps={{ 'aria-label': 'search' }}
+                                    />
+                                </Search>
+                            </>
+                        }
                     </Toolbar>
                 </Grid>
             </AppBar>
