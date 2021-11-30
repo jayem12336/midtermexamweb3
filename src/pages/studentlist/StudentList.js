@@ -119,15 +119,11 @@ export default function StudentList() {
 
     const { stud } = useSelector((state) => state);
 
-    const [studInfo, setStudInfo] = useState([])
-
-    useEffect(() => {
-            setStudInfo(stud.studentData)
-    }, [studInfo])
-
-    const studInfoBtn = (studentinfo) => {
-        dispatch(toggleStudentData(studentinfo, history));
+    const studInfoBtn = (studentData) => {
+        dispatch(toggleStudentData(studentData, history));
     }
+
+    console.log(stud.studentData)
 
     return (
         <Box>
@@ -174,23 +170,23 @@ export default function StudentList() {
                 </Box>
             </Box>
             <Box component={Grid} container justifyContent='center' sx={{ paddingTop: 2, paddingLeft: 2, paddingRight: 2 }}>
-                {studInfo.map((studentinfo) => (
-                    <Box sx={style.bodyStyle} key={studentinfo.id} onClick={() => studInfoBtn(studentinfo)}>
+                {stud.studentData.map((studentdata) => (
+                    <Box sx={style.bodyStyle} key={studentdata.id} onClick={() => studInfoBtn(studentdata)}>
                         <Box component={Grid} container justifyContent="flex-start">
-                            <Typography sx={style.idStyle}> {studentinfo.id} </Typography>
+                            <Typography sx={style.idStyle}> {studentdata.id} </Typography>
                             <Avatar sx={style.avatarStyle} variant="square" />
-                            <Typography sx={style.nameStyle}> {studentinfo.displayName} </Typography>
+                            <Typography sx={style.nameStyle}> {studentdata.displayName} </Typography>
                         </Box>
                         <Box component={Grid} container justifyContent="flex-end">
-                            <Typography sx={style.sectionStyle}> {studentinfo.section} </Typography>
+                            <Typography sx={style.sectionStyle}> {studentdata.section} </Typography>
                         </Box>
                         <Box component={Grid} container justifyContent="flex-end">
-                            <Typography sx={style.reviewStyle}> {studentinfo.review} </Typography>
+                            <Typography sx={style.reviewStyle}> {studentdata.review} </Typography>
                         </Box>
                         <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
                             <Rating
                                 name="simple-controlled"
-                                value={studentinfo.rating}
+                                value={studentdata.rating}
                                 readOnly
                                 sx={{ color: (theme) => theme.colors.navButtonHover }}
                             />

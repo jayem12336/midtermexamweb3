@@ -128,7 +128,7 @@ export default function StudentInfo() {
 
     const { stud } = useSelector((state) => state);
 
-    console.log(stud.studentInfo);
+    console.log(stud.studentData);
 
     return (
         <Box>

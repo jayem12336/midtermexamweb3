@@ -22,21 +22,21 @@ export default function RouterComponent() {
 
     const dispatch = useDispatch();
 
-    const { user } = useSelector((state) => state);
+    const { user, stud } = useSelector((state) => state);
 
     useEffect(() => {
         auth.onAuthStateChanged((authUser) => {
             if (authUser) {
                 dispatch(setUser(authUser));
-                dispatch(getStudentData());
             } else {
                 dispatch(setUser(null));
             }
         })
     }, [dispatch])
 
-    console.log(user);
-
+    useEffect(() => {
+        dispatch(getStudentData())
+    }, [dispatch])
     return (
         <ThemeProvider theme={THEME}>
             <Router>

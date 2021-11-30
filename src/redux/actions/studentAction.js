@@ -1,10 +1,10 @@
 import * as actionTypes from '../types';
 
-export const toggleStudentData = (studentInfo , history) => async (dispatch) => {
+export const toggleStudentData = (studentData , history) => async (dispatch) => {
     try {
-        localStorage.setItem('studentInfo' , JSON.stringify(studentInfo));
-        dispatch({ type: actionTypes.SET_STUDENTS_DATA, payload: studentInfo });
-        history.push(`/studentevaluation/${studentInfo.id}`)
+        localStorage.setItem('studentdata' , JSON.stringify(studentData));
+        dispatch({ type: actionTypes.SET_STUDENTS_DATA, payload: studentData });
+        history.push(`/studentevaluation/${studentData.id}`)
     } catch (err) {
         console.error(err);
     }
@@ -12,9 +12,9 @@ export const toggleStudentData = (studentInfo , history) => async (dispatch) => 
 
 export const getStudentData = () => async (dispatch) => {
     try {
-        const studentInfo = 
-        localStorage.getItem('studentInfo');
-        dispatch({ type: actionTypes.GET_STUDENTS_DATA, payload: JSON.parse(studentInfo)});
+        const studentData = 
+        localStorage.getItem('studentdata');
+        dispatch({ type: actionTypes.SET_STUDENTS_DATA, payload: JSON.parse(studentData)});
     } catch (err) {
         console.error(err);
     }
