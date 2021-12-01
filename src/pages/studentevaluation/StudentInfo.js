@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react';
 
 import {
     Box,
@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 
 const style = {
@@ -22,10 +23,22 @@ const style = {
     },
     avatarStyle: {
         borderRadius: 2,
-        width: 100,
-        height: 100,
+        width: {
+            xs: 80,
+            sm: 100,
+            md: 100
+        },
+        height: {
+            xs: 80,
+            sm: 100,
+            md: 100
+        },
         border: '2px solid white',
-        marginBottom: 2
+        marginBottom: {
+            xs: 0,
+            sm: 2,
+            md: 2,
+        }
     },
     floatChild: {
         width: {
@@ -62,9 +75,13 @@ const style = {
     },
     studNameStyle: {
         color: (theme) => theme.colors.textColor,
-        fontSize: 30,
+        fontSize: {
+            xs: 26,
+            sm: 30,
+            md: 30
+        },
         marginLeft: {
-            xs: 0,
+            xs: 5,
             sm: 22,
             md: 12
         },
@@ -129,6 +146,8 @@ export default function StudentInfo() {
     const { stud } = useSelector((state) => state);
 
     console.log(stud.studentData);
+
+
 
     return (
         <Box>
@@ -245,7 +264,9 @@ export default function StudentInfo() {
                         <Typography sx={style.linkStyle}> Github </Typography>
                     </Box>
                     <Box component={Grid} container justifyContent="flex-start">
-                        <Typography sx={{ ...style.linkStyle, ...style.linkColorStyle }}> Facebook </Typography>
+                        <a href={`${stud.studentInfo.facebookUrl}`} style={{ textDecoration: 'none', cursor: 'pointer' }}>
+                            <Typography sx={{ ...style.linkStyle, ...style.linkColorStyle }}> Facebook </Typography>
+                        </a>
                     </Box>
                     <Box component={Grid} container justifyContent="flex-start">
                         <Typography sx={{ ...style.linkStyle, ...style.linkColorStyle }}> Linkedin </Typography>

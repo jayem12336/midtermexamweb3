@@ -1,19 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import NavBar from '../../components/navbar/NavBar'
 
 import {
     Box,
     Typography,
     Grid,
-    Item,
     Avatar,
     Rating,
     Button,
     TextField
 } from '@mui/material';
 
-import TopStudent from '../studentlist/TopStudents';
-import StudentList from '../studentlist/StudentList';
 import Footer from '../../components/footer/Footer';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -24,6 +21,14 @@ import { BiShare } from 'react-icons/bi';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import StudentInfo from './StudentInfo';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { auth, db } from '../../utils/firebase';
+
+import { setDoc, doc } from '@firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
+
+
 
 const style = {
     //helper
@@ -49,7 +54,11 @@ const style = {
         borderRadius: 2,
         backgroundColor: (theme) => theme.colors.cardColor,
         border: '1px solid #2e2c2c',
-        padding: 5,
+        padding: {
+            xs: 1,
+            sm: 3,
+            md: 5,
+        },
         width: 1090,
     },
     avatarStyle: {
@@ -112,11 +121,6 @@ const style = {
         flexDirection: 'row',
         display: 'flex',
         width: '100%',
-        marginLeft: {
-            xs: 0,
-            sm: 10,
-            md: 12
-        }
     },
     idStyle: {
         color: "#62666D",
@@ -196,7 +200,7 @@ const style = {
         color: (theme) => theme.colors.textColor,
         textTransform: 'none',
         fontSize: 20,
-        color: "#62666D"
+
     },
     commentStyle: {
         flexDirection: 'row',
@@ -229,10 +233,9 @@ const style = {
     ratingContainer: {
         border: '1px solid #2e2c2c',
         padding: 4,
-        paddingLeft: 5,
         borderRadius: 2,
         backgroundColor: (theme) => theme.colors.cardColor,
-        width: 400,
+        maxWidth: 400,
         marginTop: 4
     },
     ratingName: {
@@ -263,11 +266,52 @@ export default function StudentEvaluation() {
 
     const [showInput, setShowInput] = useState(false);
 
+    const [showInputRating, setShowInputRating] = useState(false)
+
     const [inputValue, setInputValue] = useState('');
+
+    const [userAuth, setUserAuth] = useState("");
+
+    const [comment, setComment] = useState("");
+
+    const { stud } = useSelector((state) => state);
+
+    const id = stud.studentInfo.id;
+
+    const [breakDownRating, setBreakDownRating] = useState({
+        teamwork: 4,
+        creativity: 3,
+        adaptability: 1,
+        leadership: 2,
+        persuasion: 2,
+        averageRating: 0
+    })
+
+    useEffect(() => {
+        auth.onAuthStateChanged((authUser) => {
+            setUserAuth(authUser)
+        })
+    }, [])
+
+    const postComment = async () => {
+        if (inputValue === "") {
+            alert("please fill up the following fields")
+        }
+        else {
+            const docRef = doc(db, "commentsection", userAuth.uid);
+            const payload = {
+                comments: inputValue,
+                message: 'hello world'
+            };
+            await setDoc(docRef, payload);
+        }
+    }
+
+    console.log(id)
 
     return (
         <Box>
-            <NavBar tabvalue={0} />
+            <NavBar tabvalue={'two'} />
             <Box component={Grid} container justifyContent="center" sx={style.section1}>
                 <Box sx={style.studInfoContainer}>
                     <StudentInfo />
@@ -279,110 +323,117 @@ export default function StudentEvaluation() {
                     <Box component={Grid} container justifyContent="center">
                         <Rating
                             name="simple-controlled"
-                            value={value}
+                            value={breakDownRating.averageRating}
                             precision={0.5}
                             sx={{ color: (theme) => theme.colors.navButtonHover, marginTop: 4, fontSize: 50 }}
                             onChange={(event, newValue) => {
-                                setValue(newValue);
+                                setBreakDownRating({ ...breakDownRating, averageRating: newValue });
+                                setShowInputRating(!showInputRating);
                             }}
+                            readOnly={!userAuth ? true : false}
+
                         />
                     </Box>
                 </Box>
 
-                <Box component={Grid} container sx={style.ratingContainer} justifyContent="center">
-                    <Typography color="#D1D4C9" variant="h7" sx={{ marginBottom: 2, color: '#D1D4C9' }}>Rating</Typography>
-                    <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
-                        <Box component={Grid} container justifyContent="flex-start">
-                            <Typography variant="body2" color="#D1D4C9"> Teamwork </Typography>
+                {showInputRating ?
+                    <Box component={Grid} container sx={style.ratingContainer} justifyContent="center">
+                        <Typography color="#D1D4C9" variant="h7" sx={{ marginBottom: 2, color: '#D1D4C9' }}>Rating</Typography>
+                        <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
+                            <Box component={Grid} justifyContent="flex-start">
+                                <Typography variant="body2" color="#D1D4C9"> Teamwork </Typography>
+                            </Box>
+                            <Box component={Grid} container justifyContent="flex-end">
+                                <Rating
+                                    name="simple-controlled"
+                                    value={value}
+                                    precision={0.5}
+                                    sx={style.ratingStyle}
+                                    onChange={(event, newValue) => {
+                                        setValue(newValue);
+                                    }}
+                                />
+                            </Box>
                         </Box>
-                        <Box component={Grid} container justifyContent="flex-end">
-                            <Rating
-                                name="simple-controlled"
-                                value={value}
-                                precision={0.5}
-                                sx={style.ratingStyle}
-                                onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                }}
-                            />
+                        <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
+                            <Box component={Grid} container justifyContent="flex-start">
+                                <Typography variant="body2" color="#D1D4C9"> Creativity </Typography>
+                            </Box>
+                            <Box component={Grid} container justifyContent="flex-end">
+                                <Rating
+                                    name="simple-controlled"
+                                    value={breakDownRating.creativity}
+                                    precision={0.5}
+                                    sx={style.ratingStyle}
+                                    onChange={(event, newValue) => {
+                                        setBreakDownRating({ ...breakDownRating, creativity: newValue });
+                                    }}
+                                />
+                            </Box>
                         </Box>
+                        <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
+                            <Box component={Grid} container justifyContent="flex-start">
+                                <Typography variant="body2" color="#D1D4C9"> Adaptability </Typography>
+                            </Box>
+                            <Box component={Grid} container justifyContent="flex-end">
+                                <Rating
+                                    name="simple-controlled"
+                                    value={breakDownRating.adaptability}
+                                    precision={0.5}
+                                    sx={style.ratingStyle}
+                                    onChange={(event, newValue) => {
+                                        setBreakDownRating({ ...breakDownRating, adaptability: newValue });
+                                    }}
+                                />
+                            </Box>
+                        </Box>
+                        <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
+                            <Box component={Grid} container justifyContent="flex-start">
+                                <Typography variant="body2" color="#D1D4C9"> Leadership </Typography>
+                            </Box>
+                            <Box component={Grid} container justifyContent="flex-end">
+                                <Rating
+                                    name="simple-controlled"
+                                    value={breakDownRating.leadership}
+                                    precision={0.5}
+                                    sx={style.ratingStyle}
+                                    onChange={(event, newValue) => {
+                                        setBreakDownRating({ ...breakDownRating, leadership: newValue });
+                                    }}
+                                />
+                            </Box>
+                        </Box>
+                        <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
+                            <Box component={Grid} container justifyContent="flex-start">
+                                <Typography variant="body2" color="#D1D4C9"> Persuasion </Typography>
+                            </Box>
+                            <Box component={Grid} container justifyContent="flex-end">
+                                <Rating
+                                    name="simple-controlled"
+                                    value={breakDownRating.persuasion}
+                                    precision={0.5}
+                                    sx={style.ratingStyle}
+                                    onChange={(event, newValue) => {
+                                        setBreakDownRating({ ...breakDownRating, persuasion: newValue });
+                                    }}
+                                />
+                            </Box>
+                        </Box>
+                        <Typography color="textPrimary" variant="h7" sx={{ marginBottom: 2, color: '#D1D4C9', marginTop: 3 }}>Share us your thoughts!</Typography>
+                        <TextField
+                            variant="filled"
+                            multiline
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            fullWidth
+                            minRows={4}
+                            sx={{ borderBottom: 'none', marginBottom: 3 }}
+                        />
+                        <Button variant="contained" sx={style.submitBtn} onClick={ () => postComment(id)}>Submit</Button>
                     </Box>
-                    <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
-                        <Box component={Grid} container justifyContent="flex-start">
-                            <Typography variant="body2" color="#D1D4C9"> Creativity </Typography>
-                        </Box>
-                        <Box component={Grid} container justifyContent="flex-end">
-                            <Rating
-                                name="simple-controlled"
-                                value={value}
-                                precision={0.5}
-                                sx={style.ratingStyle}
-                                onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                }}
-                            />
-                        </Box>
-                    </Box>
-                    <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
-                        <Box component={Grid} container justifyContent="flex-start">
-                            <Typography variant="body2" color="#D1D4C9"> Adaptability </Typography>
-                        </Box>
-                        <Box component={Grid} container justifyContent="flex-end">
-                            <Rating
-                                name="simple-controlled"
-                                value={value}
-                                precision={0.5}
-                                sx={style.ratingStyle}
-                                onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                }}
-                            />
-                        </Box>
-                    </Box>
-                    <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
-                        <Box component={Grid} container justifyContent="flex-start">
-                            <Typography variant="body2" color="#D1D4C9"> Leadership </Typography>
-                        </Box>
-                        <Box component={Grid} container justifyContent="flex-end">
-                            <Rating
-                                name="simple-controlled"
-                                value={value}
-                                precision={0.5}
-                                sx={style.ratingStyle}
-                                onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                }}
-                            />
-                        </Box>
-                    </Box>
-                    <Box sx={{ ...style.bodyStyle, ...style.marginTopRating }}>
-                        <Box component={Grid} container justifyContent="flex-start">
-                            <Typography variant="body2" color="#D1D4C9"> Persuasion </Typography>
-                        </Box>
-                        <Box component={Grid} container justifyContent="flex-end">
-                            <Rating
-                                name="simple-controlled"
-                                value={value}
-                                precision={0.5}
-                                sx={style.ratingStyle}
-                                onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                }}
-                            />
-                        </Box>
-                    </Box>
-                    <Typography color="textPrimary" variant="h7" sx={{ marginBottom: 2, color: '#D1D4C9', marginTop: 3 }}>Share us your thoughts!</Typography>
-                    <TextField
-                        variant="filled"
-                        multiline
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        fullWidth
-                        minRows={4}
-                        sx={{ borderBottom: 'none', marginBottom: 3 }}
-                    />
-                    <Button variant="contained" sx={style.submitBtn}>Submit</Button>
-                </Box>
+                    :
+                    ''
+                }
                 <Box component={Grid} container justifyContent="center" sx={style.section2}>
                     <Box sx={{ width: 1090 }}>
                         <Box component={Grid} container justifyContent="flex-end">
@@ -465,11 +516,19 @@ export default function StudentEvaluation() {
                                     <Typography sx={style.textComment}> Add your comment </Typography>
                                     <Box component={Grid} container sx={{ marginTop: 2 }} spacing={2}>
                                         <Grid item xs={10}>
-                                            <TextField id="outlined-basic" fullWidth sx={{ backgroundColor: '#131414', borderRadius: 3 }} />
+                                            <TextField
+                                                id="outlined-basic"
+                                                fullWidth
+                                                onChange={(e) => setComment(e.target.value)}
+                                                sx={{
+                                                    backgroundColor: '#131414',
+                                                    borderRadius: 3
+                                                }}
+                                            />
                                         </Grid>
                                         <Grid item xs={2}>
                                             <Grid container justifyContent="center" sx={{ paddingTop: 1 }}>
-                                                <Button variant="contained" sx={style.submitBtn}>Submit</Button>
+                                                <Button variant="contained" disabled={!comment} sx={style.submitBtn} >Submit</Button>
                                             </Grid>
                                         </Grid>
                                     </Box>
@@ -500,19 +559,19 @@ export default function StudentEvaluation() {
                         <Box sx={{ marginTop: 5 }}>
                             <Box component={Grid} container justifyContent="center">
                                 <Avatar variant="square" sx={style.arrowLeftContainer}>
-                                    <ArrowBackIcon style={{ color:"#2C2F31", fontSize: 30 }} />
+                                    <ArrowBackIcon style={{ color: "#2C2F31", fontSize: 30 }} />
                                 </Avatar>
-                                <Typography sx={{ color:"#D1D4C9", marginTop: .8, marginRight: 1}}>Page</Typography>
-                                <TextField 
-                                sx={{ marginTop: -.2}} 
-                                inputProps={{
-                                    sx: { height: 10, width: 20, backgroundColor: '#090807'}
-                                }}
-                                defaultValue={1}
+                                <Typography sx={{ color: "#D1D4C9", marginTop: .8, marginRight: 1 }}>Page</Typography>
+                                <TextField
+                                    sx={{ marginTop: -.2 }}
+                                    inputProps={{
+                                        sx: { height: 10, width: 20, backgroundColor: '#090807' }
+                                    }}
+                                    defaultValue={1}
                                 />
-                                <Typography sx={{ color:"#D1D4C9", marginTop: .8, marginLeft: 1}}> of 100</Typography>
+                                <Typography sx={{ color: "#D1D4C9", marginTop: .8, marginLeft: 1 }}> of 100</Typography>
                                 <Avatar variant="square" sx={style.arrowRightContainer}>
-                                    <ArrowForwardIcon style={{ color:"#2C2F31", fontSize: 30 }} />
+                                    <ArrowForwardIcon style={{ color: "#2C2F31", fontSize: 30 }} />
                                 </Avatar>
                             </Box>
                         </Box>

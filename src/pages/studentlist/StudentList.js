@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
     Box,
     Button,
@@ -67,6 +67,7 @@ const style = {
     nameStyle: {
         color: (theme) => theme.colors.textColor,
         paddingTop: 0.8,
+        cursor: 'pointer',
         paddingLeft: {
             xs: 3,
             md: 2
@@ -114,8 +115,6 @@ export default function StudentList() {
     const dispatch = useDispatch();
 
     const history = useHistory();
-
-    const [value, setValue] = React.useState(5);
 
     const { stud } = useSelector((state) => state);
 
@@ -171,11 +170,11 @@ export default function StudentList() {
             </Box>
             <Box component={Grid} container justifyContent='center' sx={{ paddingTop: 2, paddingLeft: 2, paddingRight: 2 }}>
                 {stud.studentData.map((studentdata) => (
-                    <Box sx={style.bodyStyle} key={studentdata.id} onClick={() => studInfoBtn(studentdata)}>
+                    <Box sx={style.bodyStyle} key={studentdata.id}>
                         <Box component={Grid} container justifyContent="flex-start">
                             <Typography sx={style.idStyle}> {studentdata.id} </Typography>
                             <Avatar sx={style.avatarStyle} variant="square" />
-                            <Typography sx={style.nameStyle}> {studentdata.displayName} </Typography>
+                            <Typography sx={style.nameStyle} onClick={() => studInfoBtn(studentdata)}> {studentdata.displayName} </Typography>
                         </Box>
                         <Box component={Grid} container justifyContent="flex-end">
                             <Typography sx={style.sectionStyle}> {studentdata.section} </Typography>

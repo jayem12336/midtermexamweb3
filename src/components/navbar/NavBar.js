@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { styled, alpha } from '@mui/material/styles';
 import {
@@ -41,6 +41,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 import { useHistory } from 'react-router-dom';
 import { logoutInitiate } from '../../redux/actions/userAction';
+import { auth } from '../../utils/firebase';
 
 const style = {
     accountButton: {
@@ -57,8 +58,8 @@ const style = {
     },
     title: {
         fontSize: {
-            xs:'22px',
-            md:'25px'
+            xs: '22px',
+            md: '25px'
         },
         marginLeft: 1,
         color: (theme) => theme.colors.navButton
@@ -120,7 +121,6 @@ const style = {
     },
     indicator: {
         top: "0px",
-
     },
 
 };
@@ -166,15 +166,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-export default function NavBar() {
+export default function NavBar({ tabvalue }) {
 
     const history = useHistory();
 
     const dispatch = useDispatch();
 
-    const [value, setValue] = React.useState('one');
+    const [value, setValue] = React.useState(tabvalue);
 
-    const { user } = useSelector((state) => state);
+    const [userAuth, setUserAuth] = useState("");
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -217,6 +217,12 @@ export default function NavBar() {
             });
     }
 
+    useEffect(() => {
+        auth.onAuthStateChanged((authUser) => {
+            setUserAuth(authUser)
+        })
+    }, [])
+
     const btnLogout = () => {
         dispatch(logoutInitiate(history));
     }
@@ -238,7 +244,6 @@ export default function NavBar() {
                                     <Grid container justifyContent="center">
                                         <Tabs
                                             value={value}
-                                            onChange={handleChange}
                                             textColor="secondary"
                                             indicatorColor="secondary"
                                             aria-label="secondary tabs example"
@@ -259,7 +264,7 @@ export default function NavBar() {
                             aria-controls="fade-menu"
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
-                            onClick={handleClick}
+                            onClick={!userAuth ? handleClick : btnLogout}
                         >
                             <Avatar src={accountprofile} sx={{
                                 marginLeft: {
@@ -296,19 +301,24 @@ export default function NavBar() {
                                     <Avatar variant="square" sx={{
                                         backgroundColor: "#4267B2", borderRadius: 2,
                                         marginLeft: 2,
+                                        cursor: "pointer",
+                                        marginTop: 2
                                     }}>
                                         <FiFacebook color="#FFFFFF" />
                                     </Avatar>
                                     <Avatar variant="square" sx={{
                                         backgroundColor: "#00ACEE", borderRadius: 2,
                                         marginLeft: 2,
+                                        cursor: "pointer",
+                                        marginTop: 2
                                     }}>
                                         <RiTwitterLine color="#FFFFFF" />
                                     </Avatar>
                                     <Avatar variant="square" sx={{
                                         backgroundColor: "#4285F4", borderRadius: 2,
                                         marginLeft: 2,
-                                        cursor: "pointer"
+                                        cursor: "pointer",
+                                        marginTop: 2
                                     }}
                                         onClick={btnSignInWithGoogle}>
                                         <GoogleIcon color="#FFFFFF" />

@@ -42,7 +42,7 @@ export default function Home() {
 
     return (
         <Box>
-            <NavBar tabvalue={0} />
+            <NavBar tabvalue={'one'} />
             <Box component={Grid} container justifyContent="center" sx={style.section1}>
                 <Box component={Grid} container sx={{ width: 1200 }} justifyContent="center">
                     <Box component={Grid} container sx={style.titleStyle}>

@@ -20,7 +20,7 @@ import SmartDisplayIcon from '@mui/icons-material/SmartDisplay';
 const style = {
     menuIconContainer: {
         marginLeft: 'auto',
-        marginRight: -20
+        
     },
     icons: {
         fontSize: '1.5rem',

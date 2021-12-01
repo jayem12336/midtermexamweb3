@@ -8,7 +8,7 @@ import theme from '../utils/theme';
 
 import { auth } from '../utils/firebase';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { createTheme, ThemeProvider } from '@mui/material';
 import StudentInformation from '../pages/studentevaluation/StudentEvaluation';
@@ -20,9 +20,9 @@ export default function RouterComponent() {
 
     const THEME = createTheme(theme);
 
-    const dispatch = useDispatch();
+    const { user } = useSelector((state) => state);
 
-    const { user, stud } = useSelector((state) => state);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         auth.onAuthStateChanged((authUser) => {
@@ -33,10 +33,14 @@ export default function RouterComponent() {
             }
         })
     }, [dispatch])
-
+    
+    console.log(user)
+    
     useEffect(() => {
         dispatch(getStudentData())
     }, [dispatch])
+
+  
     return (
         <ThemeProvider theme={THEME}>
             <Router>
