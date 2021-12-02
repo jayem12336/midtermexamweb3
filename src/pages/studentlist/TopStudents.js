@@ -23,6 +23,7 @@ const style = {
 export default function TopStudents( {studName, numReviews, numRating}) {
 
     const [value, setValue] = React.useState(numRating);
+    
     return (
         <Box>
             <Card sx={style.cardStyle}>

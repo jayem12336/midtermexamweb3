@@ -10,8 +10,6 @@ import {
 } from '@mui/material';
 
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-
 
 const style = {
     //helper
@@ -145,10 +143,6 @@ export default function StudentInfo() {
 
     const { stud } = useSelector((state) => state);
 
-    console.log(stud.studentData);
-
-
-
     return (
         <Box>
             <Box style={style.floatChild}
@@ -164,17 +158,15 @@ export default function StudentInfo() {
                     <Box component={Grid} container justifyContent="center">
                         <Rating
                             name="simple-controlled"
-                            value={value}
+                            value={stud.studentInfo.rate}
                             sx={{ color: (theme) => theme.colors.navButtonHover, marginTop: 2, fontSize: 40 }}
-                            onChange={(event, newValue) => {
-                                setValue(newValue);
-                            }}
+                            readOnly
                         />
                     </Box>
                 </Box>
                 <Box component={Grid} container justifyContent="center">
                     <Typography sx={style.textStyle}> 3.0 Overall Rating </Typography>
-                    <Typography sx={{ ...style.textStyle, ...style.marginTextLeft }}> 2000 Reviews </Typography>
+                    <Typography sx={{ ...style.textStyle, ...style.marginTextLeft }}> {stud.studentInfo.review} Reviews </Typography>
                 </Box>
             </Box>
             <Box style={style.floatChild}>

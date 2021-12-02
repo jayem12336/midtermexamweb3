@@ -14,7 +14,7 @@ import {
     InputBase
 } from '@mui/material';
 
-import { useSelector, useDispatch } from 'react-redux';
+import {  useDispatch } from 'react-redux';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -22,7 +22,6 @@ import Tab from '@mui/material/Tab';
 import Menu from '@mui/material/Menu';
 import Fade from '@mui/material/Fade';
 
-import Scroll from "react-scroll";
 import { useTheme } from '@mui/material/styles';
 import GridViewIcon from '@mui/icons-material/GridView';
 import SearchIcon from '@mui/icons-material/Search';
@@ -176,10 +175,7 @@ export default function NavBar({ tabvalue }) {
 
     const [userAuth, setUserAuth] = useState("");
 
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
+    
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -200,7 +196,6 @@ export default function NavBar({ tabvalue }) {
             .then((result) => {
                 // This gives you a Google Access Token. You can use it to access the Google API.
                 // The signed-in user info.
-                const user = result.user;
                 window.location.reload(false);
                 // ...
             }).catch((error) => {
@@ -225,6 +220,7 @@ export default function NavBar({ tabvalue }) {
 
     const btnLogout = () => {
         dispatch(logoutInitiate(history));
+        setValue(tabvalue)
     }
 
     return (

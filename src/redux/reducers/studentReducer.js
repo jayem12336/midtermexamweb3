@@ -1,19 +1,9 @@
 import * as actionTypes from '../types';
 
 const initialState = {
-    studentData: [
-        { id: 1, displayName: 'Mariano, Jarvis S.', section: 'BSIT 4A', rate: 0, review: 20, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123" },
-        { id: 2, displayName: 'Aguado, Jerick S.', section: 'BSIT 4A', rate: 0, review: 4, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123" },
-        { id: 3, displayName: 'Guillermo, Aldrin P.', section: 'BSIT 4A', rate: 0, review: 2, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123" },
-        { id: 4, displayName: 'Bronoso, Nico B.', section: 'BSIT 4A', rate: 0, review: 0, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123" },
-        { id: 5, displayName: 'Aquino, Joe Marie R.', section: 'BSIT 4A', rate: 0, review: 0, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123" },
-        { id: 6, displayName: 'Adriano, Junnie S.', section: 'BSIT 4A', rate: 0, review: 0, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123" },
-        { id: 7, displayName: 'Tadeo, Angelo S.', section: 'BSIT 4A', rate: 0, review: 0, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123" },
-        { id: 8, displayName: 'Del Rosario, Arjay S.', section: 'BSIT 4A', rate: 0, review: 0, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123" },
-        { id: 9, displayName: 'Dela Cruz, Arjay S.', section: 'BSIT 4A', rate: 0, review: 0, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123" },
-        { id: 10, displayName: 'Dela Cruz, Juan S.', section: 'BSIT 4A', rate: 0, review: 0, gender: 'male', birthday: '02-22-1990', address: 'Pandi Bulacan', nickname: 'kokoy', skills: 'JavaScript, Python', facebookUrl: 'https://www.facebook.com/nico.bronoso.58', uid: "nano123j" },
-    ],
-    studentInfo: {}
+    studentData: [],
+    studentInfo: {},
+    loading: true,
 }
 
 const studentReducer = (state = initialState, action) => {
@@ -23,6 +13,12 @@ const studentReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 studentInfo: action.payload,
+            };
+        case actionTypes.SET_STUDENTS_LIST_DATA:
+            return {
+                ...state,
+                loading: false,
+                studentData: action.payload,
             };
 
         default:

@@ -10,6 +10,7 @@ import {
     Button,
     TextField
 } from '@mui/material';
+import moment from 'moment'
 
 import Footer from '../../components/footer/Footer';
 
@@ -22,13 +23,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import StudentInfo from './StudentInfo';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { auth, db } from '../../utils/firebase';
 
-import { setDoc, doc } from '@firebase/firestore';
-import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2';
 
-
+import { setDoc, doc, onSnapshot, collection, addDoc, updateDoc } from '@firebase/firestore';
 
 const style = {
     //helper
@@ -262,7 +262,6 @@ const style = {
 }
 export default function StudentEvaluation() {
 
-    const [value, setValue] = React.useState(3.5);
 
     const [showInput, setShowInput] = useState(false);
 
@@ -279,35 +278,93 @@ export default function StudentEvaluation() {
     const id = stud.studentInfo.id;
 
     const [breakDownRating, setBreakDownRating] = useState({
-        teamwork: 4,
-        creativity: 3,
-        adaptability: 1,
-        leadership: 2,
-        persuasion: 2,
+        teamwork: 0,
+        creativity: 0,
+        adaptability: 0,
+        leadership: 0,
+        persuasion: 0,
         averageRating: 0
     })
+
+    const [post, setPost] = useState([]);
 
     useEffect(() => {
         auth.onAuthStateChanged((authUser) => {
             setUserAuth(authUser)
         })
     }, [])
-
-    const postComment = async () => {
+    const userPost = async () => {
         if (inputValue === "") {
-            alert("please fill up the following fields")
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please Type Something!',
+            })
+        }
+        else if (breakDownRating.teamwork === 0 || breakDownRating.creativity === 0 || breakDownRating.adaptability === 0 || breakDownRating.leadership === 0 || breakDownRating.persuasion === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please complete the following rating!',
+            })
         }
         else {
-            const docRef = doc(db, "commentsection", userAuth.uid);
-            const payload = {
-                comments: inputValue,
-                message: 'hello world'
-            };
-            await setDoc(docRef, payload);
+            breakDownRating.averageRating =
+                ((
+                    breakDownRating.teamwork
+                    + breakDownRating.creativity
+                    + breakDownRating.adaptability
+                    + breakDownRating.leadership
+                    + breakDownRating.persuasion)
+                    / 5
+                )
+            const washingtonRef = doc(db, "users", id);
+
+            await updateDoc(washingtonRef, {
+                review: stud.studentInfo.review + 1,
+                rate: stud.studentInfo.rate + breakDownRating.averageRating,
+            });
+            const docRef = await addDoc(collection(db, "users", id, "post"), {
+                post: inputValue,
+                email: userAuth.email,
+                averagerating: breakDownRating.averageRating,
+                photoURL: userAuth.photoURL,
+                timestamp: new Date(),
+                userid: id
+            });
+
+            console.log("Document written with ID: ", docRef.id);
+            Swal.fire({
+                icon: 'success',
+                title: 'Your work has been saved',
+            })
+            setBreakDownRating({ ...breakDownRating, averageRating: 0, teamwork: 0, creativity: 0, adaptability: 0, leadership: 0, persuasion: 0 });
+            setShowInputRating(false);
+            setInputValue('');
+            console.log(breakDownRating.averageRating)
         }
     }
+    //const docRef = await addDoc(collection(db, "users", id, "post", "comments"),
+    const userComment = async () => {
+        const docRef = doc(db, "post", "comment", userAuth.id);
+        const payload = {
+            text: comment,
+            email: userAuth.email,
+            photoURL: userAuth.photoURL,
+            timestamp: new Date(),
+            userid: '1'
+        };
+        await setDoc(docRef, payload);
 
-    console.log(id)
+    }
+    useEffect(
+        () =>
+            onSnapshot(collection(db, "users", id, "post", ""), (snapshot) => {
+                setPost(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+            }
+            ),
+        []
+    );
 
     return (
         <Box>
@@ -331,7 +388,6 @@ export default function StudentEvaluation() {
                                 setShowInputRating(!showInputRating);
                             }}
                             readOnly={!userAuth ? true : false}
-
                         />
                     </Box>
                 </Box>
@@ -346,11 +402,11 @@ export default function StudentEvaluation() {
                             <Box component={Grid} container justifyContent="flex-end">
                                 <Rating
                                     name="simple-controlled"
-                                    value={value}
+                                    value={breakDownRating.teamwork}
                                     precision={0.5}
                                     sx={style.ratingStyle}
                                     onChange={(event, newValue) => {
-                                        setValue(newValue);
+                                        setBreakDownRating({ ...breakDownRating, teamwork: newValue });
                                     }}
                                 />
                             </Box>
@@ -429,12 +485,13 @@ export default function StudentEvaluation() {
                             minRows={4}
                             sx={{ borderBottom: 'none', marginBottom: 3 }}
                         />
-                        <Button variant="contained" sx={style.submitBtn} onClick={ () => postComment(id)}>Submit</Button>
+                        <Button variant="contained" sx={style.submitBtn} onClick={() => userPost(id)}>Submit</Button>
                     </Box>
                     :
                     ''
                 }
                 <Box component={Grid} container justifyContent="center" sx={style.section2}>
+
                     <Box sx={{ width: 1090 }}>
                         <Box component={Grid} container justifyContent="flex-end">
                             <Typography color="textPrimary">
@@ -450,112 +507,92 @@ export default function StudentEvaluation() {
                                 No Filter
                             </Button>
                         </Box>
-                        <Box component={Grid} container sx={style.commentContainer}>
-                            <Box component={Grid} container justifyContent="flex-start" sx={{ display: 'flex', flexDirection: 'row' }}>
-                                <Avatar />
-                                <Typography color='textPrimary' sx={{ marginLeft: 2, fontSize: 15 }}> JohnDoe@gmail.com <br /> <span style={{ color: "#62666D" }}> Posted 3 hours Ago </span></Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 6 }}>
-                                <Rating
-                                    name="simple-controlled"
-                                    value={value}
-                                    sx={{ color: (theme) => theme.colors.navButtonHover, fontSize: 30 }}
-                                    onChange={(event, newValue) => {
-                                        setValue(newValue);
-                                    }}
-                                />
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 5.5 }}>
-                                <Typography color='textPrimary' sx={{ marginLeft: 1, fontSize: 18 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end" sx={{ marginTop: 3 }}>
-                                <Button sx={{ ...style.btnCommentReportStyle, ...style.marginStyle }} startIcon={<ChatBubbleOutlineIcon style={{ fontSize: 25 }} />}>
-                                    0 comment
-                                </Button>
-                                <Button sx={{ ...style.btnCommentReportStyle, ...style.marginStyle }} startIcon={<ErrorOutlineIcon style={{ fontSize: 25 }} />}>
-                                    Report
-                                </Button>
-                            </Box>
-                        </Box>
-                        <Box component={Grid} container sx={style.commentContainer}>
-                            <Box component={Grid} container justifyContent="flex-start" sx={{ display: 'flex', flexDirection: 'row' }}>
-                                <Avatar />
-                                <Typography color='textPrimary' sx={{ marginLeft: 2, fontSize: 15 }}> JohnDoe@gmail.com <br /> <span style={{ color: "#62666D" }}> Posted 3 hours Ago </span></Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 6 }}>
-                                <Rating
-                                    name="simple-controlled"
-                                    value={value}
-                                    sx={{ color: (theme) => theme.colors.navButtonHover, fontSize: 30 }}
-                                    onChange={(event, newValue) => {
-                                        setValue(newValue);
-                                    }}
-                                />
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 5.5 }}>
-                                <Typography color='textPrimary' sx={{ marginLeft: 1, fontSize: 18 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Typography>
-                            </Box>
-                            <Box component={Grid} container justifyContent="flex-end" sx={{ marginTop: 3 }}>
-                                <Button
-                                    sx={{ ...style.btnCommentReportStyle, ...style.marginStyle }}
-                                    startIcon={<ChatBubbleOutlineIcon style={{ fontSize: 25 }} />}
-                                    onClick={() => setShowInput(!showInput)}
-                                >
-                                    0 comment
-                                </Button>
-                                <Button
-                                    sx={{ ...style.btnCommentReportStyle, ...style.marginStyle }}
-                                    startIcon={<ErrorOutlineIcon style={{ fontSize: 25 }} />}
-                                >
-                                    Report
-                                </Button>
-                            </Box>
-                            {showInput ? <>
-                                <Box component={Grid} container sx={style.commentStyle}>
-                                    <BiShare style={style.shareStyle} />
-                                    <Typography sx={style.textComment}> Add your comment </Typography>
-                                    <Box component={Grid} container sx={{ marginTop: 2 }} spacing={2}>
-                                        <Grid item xs={10}>
-                                            <TextField
-                                                id="outlined-basic"
-                                                fullWidth
-                                                onChange={(e) => setComment(e.target.value)}
-                                                sx={{
-                                                    backgroundColor: '#131414',
-                                                    borderRadius: 3
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <Grid container justifyContent="center" sx={{ paddingTop: 1 }}>
-                                                <Button variant="contained" disabled={!comment} sx={style.submitBtn} >Submit</Button>
+
+                        {post.map((postdata) => (
+
+                            <Box component={Grid} container sx={style.commentContainer} key={postdata.id}>
+                                <Box component={Grid} container justifyContent="flex-start" sx={{ display: 'flex', flexDirection: 'row' }}>
+                                    <Avatar src={postdata.photoURL} />
+                                    <Typography color='textPrimary' sx={{ marginLeft: 2, fontSize: 15 }}>{postdata.email}<br /> <span style={{ color: "#62666D" }}> Posted {moment(postdata.timestamp.toDate().toISOString()).fromNow()}</span></Typography>
+                                </Box>
+                                <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 6 }}>
+                                    <Rating
+                                        precision={0.5}
+                                        name="simple-controlled"
+                                        value={postdata.averagerating}
+                                        sx={{ color: (theme) => theme.colors.navButtonHover, fontSize: 30 }}
+                                        readOnly
+                                    />
+                                </Box>
+                                <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 5.5 }}>
+                                    <Typography color='textPrimary' sx={{ marginLeft: 1, fontSize: 18 }}>{postdata.post}</Typography>
+                                </Box>
+                                <Box component={Grid} container justifyContent="flex-end" sx={{ marginTop: 3 }}>
+                                    <Button
+                                        sx={{ ...style.btnCommentReportStyle, ...style.marginStyle }}
+                                        startIcon={<ChatBubbleOutlineIcon style={{ fontSize: 25 }} />}
+                                        onClick={() => setShowInput(!showInput)}
+                                    >
+                                        0 comment
+                                    </Button>
+                                    <Button
+                                        sx={{ ...style.btnCommentReportStyle, ...style.marginStyle }}
+                                        startIcon={<ErrorOutlineIcon style={{ fontSize: 25 }} />}
+                                    >
+                                        Report
+                                    </Button>
+                                </Box>
+                                {showInput ? <>
+                                    <Box component={Grid} container sx={style.commentStyle}>
+                                        <BiShare style={style.shareStyle} />
+                                        <Typography sx={style.textComment}> Add your comment </Typography>
+                                        <Box component={Grid} container sx={{ marginTop: 2 }} spacing={2}>
+                                            <Grid item xs={10}>
+                                                <TextField
+                                                    id="outlined-basic"
+                                                    fullWidth
+                                                    onChange={(e) => setComment(e.target.value)}
+                                                    sx={{
+                                                        backgroundColor: '#131414',
+                                                        borderRadius: 3
+                                                    }}
+                                                />
                                             </Grid>
-                                        </Grid>
+                                            <Grid item xs={2}>
+                                                <Grid container justifyContent="center" sx={{ paddingTop: 1 }}>
+                                                    <Button variant="contained" disabled={!comment} sx={style.submitBtn} onClick={userComment} >Submit</Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Box>
                                     </Box>
-                                </Box>
-                                <Box component={Grid} container sx={style.commentStyle}>
-                                    <BiShare style={style.shareStyle} />
-                                    <Typography sx={style.textComment}> Useremail@gmail.com </Typography>
-                                    <Typography sx={style.textComment}> 3 hours ago </Typography>
-                                    <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 2.5 }}>
-                                        <Typography color='textPrimary' sx={{ marginLeft: 1, fontSize: 18 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Typography>
+                                    <Box component={Grid} container sx={style.commentStyle}>
+                                        <BiShare style={style.shareStyle} />
+                                        <Typography sx={style.textComment}> Useremail@gmail.com </Typography>
+                                        <Typography sx={style.textComment}> 3 hours ago </Typography>
+                                        <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 2.5 }}>
+                                            <Typography color='textPrimary' sx={{ marginLeft: 1, fontSize: 18 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Typography>
+                                        </Box>
                                     </Box>
-                                </Box>
-                                <Box component={Grid} container sx={style.commentStyle}>
-                                    <BiShare style={style.shareStyle} />
-                                    <Typography sx={style.textComment}> Useremail@gmail.com </Typography>
-                                    <Typography sx={style.textComment}> 3 hours ago </Typography>
-                                    <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 2.5 }}>
-                                        <Typography color='textPrimary' sx={{ marginLeft: 1, fontSize: 18 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Typography>
+                                    <Box component={Grid} container sx={style.commentStyle}>
+                                        <BiShare style={style.shareStyle} />
+                                        <Typography sx={style.textComment}> Useremail@gmail.com </Typography>
+                                        <Typography sx={style.textComment}> 3 hours ago </Typography>
+                                        <Box component={Grid} container justifyContent="flex-start" sx={{ marginTop: 2, paddingLeft: 2.5 }}>
+                                            <Typography color='textPrimary' sx={{ marginLeft: 1, fontSize: 18 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Typography>
+                                        </Box>
                                     </Box>
-                                </Box>
-                                <Box component={Grid} container justifyContent="center" sx={{ marginTop: 5 }}>
-                                    <Typography sx={{ marginLeft: 1, fontSize: 18, color: '#26CE8D' }}> Loading more comments ...</Typography>
-                                </Box>
-                            </>
-                                : ""
-                            }
-                        </Box>
+                                    <Box component={Grid} container justifyContent="center" sx={{ marginTop: 5 }}>
+                                        <Typography sx={{ marginLeft: 1, fontSize: 18, color: '#26CE8D' }}> Loading more comments ...</Typography>
+                                    </Box>
+                                </>
+                                    : ""
+                                }
+                            </Box>
+
+
+                        ))}
+
+
                         <Box sx={{ marginTop: 5 }}>
                             <Box component={Grid} container justifyContent="center">
                                 <Avatar variant="square" sx={style.arrowLeftContainer}>

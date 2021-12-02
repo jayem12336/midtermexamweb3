@@ -4,7 +4,6 @@ import {
     Box,
     Typography,
     Grid,
-    Button,
 } from '@mui/material';
 
 import { FiFacebook } from 'react-icons/fi';

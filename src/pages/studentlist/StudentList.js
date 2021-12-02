@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Button,
     Typography,
     Grid,
     Avatar,
-    TextField
+    TextField,
+    LinearProgress
 } from '@mui/material';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -19,6 +20,12 @@ import { useHistory } from 'react-router';
 
 import Rating from '@mui/material/Rating';
 import { toggleStudentData } from '../../redux/actions/studentAction';
+
+import { onSnapshot, collection } from 'firebase/firestore';
+
+import { toggleStudentListData } from '../../redux/actions/studentAction';
+
+import { db } from '../../utils/firebase';
 
 const style = {
     //helper
@@ -114,15 +121,29 @@ export default function StudentList() {
 
     const dispatch = useDispatch();
 
+    const [loading, setLoading] = useState(true)
+
     const history = useHistory();
+
+    const [fetchStudent, setFetchStudent] = useState([]);
+
+    let [count, setCount] = useState(1);
 
     const { stud } = useSelector((state) => state);
 
     const studInfoBtn = (studentData) => {
         dispatch(toggleStudentData(studentData, history));
+        setCount(1);
     }
 
-    console.log(stud.studentData)
+    useEffect(() => {
+        onSnapshot(collection(db, "users"), (snapshot) => {
+            setFetchStudent(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+            setLoading(false);
+        })
+    }, [])
+
+    console.log(fetchStudent);
 
     return (
         <Box>
@@ -168,11 +189,18 @@ export default function StudentList() {
                     }}>Rating</Typography>
                 </Box>
             </Box>
+            {loading ?
+                (
+                    <LinearProgress />
+                ) :
+                (
+                    ""
+                )}
             <Box component={Grid} container justifyContent='center' sx={{ paddingTop: 2, paddingLeft: 2, paddingRight: 2 }}>
-                {stud.studentData.map((studentdata) => (
+                {fetchStudent.map((studentdata) => (
                     <Box sx={style.bodyStyle} key={studentdata.id}>
                         <Box component={Grid} container justifyContent="flex-start">
-                            <Typography sx={style.idStyle}> {studentdata.id} </Typography>
+                            <Typography sx={style.idStyle}> {count++} </Typography>
                             <Avatar sx={style.avatarStyle} variant="square" />
                             <Typography sx={style.nameStyle} onClick={() => studInfoBtn(studentdata)}> {studentdata.displayName} </Typography>
                         </Box>
@@ -185,7 +213,7 @@ export default function StudentList() {
                         <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
                             <Rating
                                 name="simple-controlled"
-                                value={studentdata.rating}
+                                value={studentdata.rate}
                                 readOnly
                                 sx={{ color: (theme) => theme.colors.navButtonHover }}
                             />
