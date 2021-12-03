@@ -4,6 +4,7 @@ const initialState = {
     studentData: [],
     studentInfo: {},
     loading: true,
+    post: ""
 }
 
 const studentReducer = (state = initialState, action) => {
@@ -20,6 +21,13 @@ const studentReducer = (state = initialState, action) => {
                 loading: false,
                 studentData: action.payload,
             };
+        case actionTypes.SET_POST_DATA:
+            return {
+                ...state,
+                loading: false,
+                post: action.payload,
+            };
+
 
         default:
             return state;

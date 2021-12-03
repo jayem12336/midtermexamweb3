@@ -14,7 +14,7 @@ import {
     InputBase
 } from '@mui/material';
 
-import {  useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -36,7 +36,6 @@ import { FiFacebook } from 'react-icons/fi';
 import { RiTwitterLine } from 'react-icons/ri';
 
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-
 
 import { useHistory } from 'react-router-dom';
 import { logoutInitiate } from '../../redux/actions/userAction';
@@ -116,10 +115,12 @@ const style = {
         color: "white",
         textTransform: "none",
         fontSize: 16,
-        marginLeft: .5
+        width: 180
     },
     indicator: {
         top: "0px",
+        maxWidth: 30,
+        marginLeft:9.5
     },
 
 };
@@ -175,7 +176,7 @@ export default function NavBar({ tabvalue }) {
 
     const [userAuth, setUserAuth] = useState("");
 
-    
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -262,12 +263,18 @@ export default function NavBar({ tabvalue }) {
                             aria-expanded={open ? 'true' : undefined}
                             onClick={!userAuth ? handleClick : btnLogout}
                         >
-                            <Avatar src={accountprofile} sx={{
+                            {!userAuth ? <Avatar src={accountprofile} sx={{
                                 marginLeft: {
                                     xs: -6,
                                     md: 0
                                 }
-                            }} />
+                            }} /> : <Avatar src={userAuth.photoURL} sx={{
+                                marginLeft: {
+                                    xs: -6,
+                                    md: 0
+                                },
+                            }} />}
+
                         </IconButton>
                         <Menu
                             id="fade-menu"

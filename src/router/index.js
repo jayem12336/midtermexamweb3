@@ -6,17 +6,21 @@ import Home from '../pages/studentlist/Home';
 
 import theme from '../utils/theme';
 
-import { auth, db } from '../utils/firebase';
+import { auth } from '../utils/firebase';
 
 import { useDispatch } from 'react-redux';
 
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, ThemeProvider, Box } from '@mui/material';
 import StudentInformation from '../pages/studentevaluation/StudentEvaluation';
 import { setUser } from '../redux/actions/userAction';
-import { getStudentData, toggleStudentListData, getStudentListData } from '../redux/actions/studentAction';
+import { getStudentData, getStudentListData } from '../redux/actions/studentAction';
+
+import CircularProgress, {
+    circularProgressClasses,
+} from '@mui/material/CircularProgress';
 
 
-export default function RouterComponent() {
+export default function RouterComponent(props) {
 
     const [loading, setLoading] = useState(true);
 
@@ -37,7 +41,36 @@ export default function RouterComponent() {
         setLoading(false);
     }, [dispatch])
 
-    if (loading) return <h1>Loading...</h1>
+    if (loading) {
+        return (
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                // flexWrap: 'wrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                justifyItems: 'center',
+                height: '100vh',
+                width: '100vw'
+            }}>
+                <CircularProgress
+                    variant="indeterminate"
+                    disableShrink
+                    sx={{
+                        color: "#161717",
+                        animationDuration: '550ms',
+                        left: 0,
+                        [`& .${circularProgressClasses.circle}`]: {
+                            strokeLinecap: 'round',
+                        },
+                    }}
+                    size={200}
+                    thickness={4}
+                    {...props}
+                />
+            </Box>
+        );
+    }
 
     return (
         <ThemeProvider theme={THEME}>

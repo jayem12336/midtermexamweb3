@@ -9,7 +9,7 @@ import {
     LinearProgress
 } from '@mui/material';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -19,11 +19,9 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useHistory } from 'react-router';
 
 import Rating from '@mui/material/Rating';
-import { toggleStudentData } from '../../redux/actions/studentAction';
+import { toggleStudentData, toggleStudentListData } from '../../redux/actions/studentAction';
 
 import { onSnapshot, collection } from 'firebase/firestore';
-
-import { toggleStudentListData } from '../../redux/actions/studentAction';
 
 import { db } from '../../utils/firebase';
 
@@ -48,10 +46,6 @@ const style = {
             sm: '75%,',
             md: '57%'
         }
-    },
-    headerTextStyle: {
-        color: "#62666D",
-        marginRight: 7
     },
     bodyStyle: {
         flexDirection: 'row',
@@ -129,21 +123,19 @@ export default function StudentList() {
 
     let [count, setCount] = useState(1);
 
-    const { stud } = useSelector((state) => state);
-
     const studInfoBtn = (studentData) => {
         dispatch(toggleStudentData(studentData, history));
         setCount(1);
     }
-
     useEffect(() => {
-        onSnapshot(collection(db, "users"), (snapshot) => {
+        onSnapshot(collection(db, "studentlist"), (snapshot) => {
             setFetchStudent(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
             setLoading(false);
         })
+        return () => {
+            setFetchStudent({}); // This worked for me
+        };
     }, [])
-
-    console.log(fetchStudent);
 
     return (
         <Box>
@@ -201,7 +193,7 @@ export default function StudentList() {
                     <Box sx={style.bodyStyle} key={studentdata.id}>
                         <Box component={Grid} container justifyContent="flex-start">
                             <Typography sx={style.idStyle}> {count++} </Typography>
-                            <Avatar sx={style.avatarStyle} variant="square" />
+                            <Avatar sx={style.avatarStyle} variant="square" src={studentdata.photoURL}/>
                             <Typography sx={style.nameStyle} onClick={() => studInfoBtn(studentdata)}> {studentdata.displayName} </Typography>
                         </Box>
                         <Box component={Grid} container justifyContent="flex-end">

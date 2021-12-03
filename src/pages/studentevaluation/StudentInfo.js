@@ -139,8 +139,6 @@ const style = {
 }
 export default function StudentInfo() {
 
-    const [value, setValue] = React.useState(3.5);
-
     const { stud } = useSelector((state) => state);
 
     return (
@@ -153,7 +151,7 @@ export default function StudentInfo() {
                 }} >
                 <Box component={Grid} container justifyContent="center">
                     <Box component={Grid} container justifyContent="center">
-                        <Avatar variant="square" sx={style.avatarStyle} />
+                        <Avatar variant="square" sx={style.avatarStyle} src={stud.studentInfo.photoURL} />
                     </Box>
                     <Box component={Grid} container justifyContent="center">
                         <Rating
@@ -165,7 +163,7 @@ export default function StudentInfo() {
                     </Box>
                 </Box>
                 <Box component={Grid} container justifyContent="center">
-                    <Typography sx={style.textStyle}> 3.0 Overall Rating </Typography>
+                    <Typography sx={style.textStyle}> {stud.studentInfo.rate} Overall Rating </Typography>
                     <Typography sx={{ ...style.textStyle, ...style.marginTextLeft }}> {stud.studentInfo.review} Reviews </Typography>
                 </Box>
             </Box>

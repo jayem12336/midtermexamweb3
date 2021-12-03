@@ -12,6 +12,8 @@ import TopStudent from './TopStudents';
 import StudentList from './StudentList';
 import Footer from '../../components/footer/Footer';
 
+import { useSelector } from 'react-redux';
+
 const style = {
     section1: {
         paddingTop: 20,
