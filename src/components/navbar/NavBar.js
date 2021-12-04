@@ -176,7 +176,6 @@ export default function NavBar({ tabvalue }) {
 
     const [userAuth, setUserAuth] = useState("");
 
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -248,7 +247,7 @@ export default function NavBar({ tabvalue }) {
                                                 sx: style.indicator,
                                             }}
                                         >
-                                            <Tab value="one" label="Student List" sx={style.tabtextStyle} />
+                                            <Tab value="one" label="Student List" sx={style.tabtextStyle} onClick={ () => history.push("/")}/>
                                             <Tab value="two" label="Student Evaluation" sx={style.tabtextStyle} />
                                             <Tab value="three" label="Blog" sx={style.tabtextStyle} />
                                         </Tabs>
@@ -265,12 +264,12 @@ export default function NavBar({ tabvalue }) {
                         >
                             {!userAuth ? <Avatar src={accountprofile} sx={{
                                 marginLeft: {
-                                    xs: -6,
+                                    xs:  -3,
                                     md: 0
                                 }
                             }} /> : <Avatar src={userAuth.photoURL} sx={{
                                 marginLeft: {
-                                    xs: -6,
+                                    xs: -3,
                                     md: 0
                                 },
                             }} />}
@@ -330,7 +329,7 @@ export default function NavBar({ tabvalue }) {
                                 </Box>
                             </Box>
                         </Menu>
-                        {!matchMD ? <SearchIcon sx={{ fontSize: 40 }} /> :
+                        {!matchMD ? <SearchIcon sx={{ fontSize: 30 }} /> :
                             <>
                                 <Search>
                                     <SearchIconWrapper>

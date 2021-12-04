@@ -105,17 +105,12 @@ export default function RatingComponent({ postemail, postrateaverage, post, time
 
     const queryTimeStamp = query(colRef, orderBy("timestamp", "desc"));
 
-
-
     useEffect(() => {
-        const fetchBusinesses = onSnapshot(queryTimeStamp, (snapshot) => {
+        onSnapshot(queryTimeStamp, (snapshot) => {
             setCommentList(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
             setTotalDoclNumbers(snapshot.docs.length);
         }
-
         )
-
-        return fetchBusinesses();
 
     }, [])
 
@@ -134,8 +129,6 @@ export default function RatingComponent({ postemail, postrateaverage, post, time
             icon: 'success',
             title: 'Your Comment has been saved',
         })
-
-
     }
 
     return (

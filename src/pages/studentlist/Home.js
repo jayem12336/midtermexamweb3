@@ -14,6 +14,8 @@ import { db } from '../../utils/firebase';
 
 import TopStudent from './TopStudents';
 
+import { useSelector } from 'react-redux'
+
 import StudentList from './StudentList';
 import Footer from '../../components/footer/Footer';
 
@@ -45,9 +47,9 @@ const style = {
 }
 export default function Home() {
 
-    const [fetchStudent, setFetchStudent] = useState([]);
-
     const colRef = collection(db, "studentlist");
+
+    const [fetchStudent, setFetchStudent] = useState([]);
 
     const queryRate = query(colRef, orderBy("rate", "desc"), limit(4));
 
@@ -74,9 +76,8 @@ export default function Home() {
                     </Box>
                     {
                         fetchStudent.map((student) => (
-                            <Grid item sx={style.columnContainer}>
+                            <Grid item sx={style.columnContainer} key={student.id}>
                                 <TopStudent
-                                    key={student.id}
                                     studPhoto={student.photoURL}
                                     studName={student.displayName}
                                     numReviews={student.review}

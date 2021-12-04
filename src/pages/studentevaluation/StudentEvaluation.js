@@ -223,14 +223,7 @@ export default function StudentEvaluation() {
     }, [])
 
     const userPost = async () => {
-        if (inputValue === "") {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please Type Something!',
-            })
-        }
-        else if (breakDownRating.teamwork === 0 || breakDownRating.creativity === 0 || breakDownRating.adaptability === 0 || breakDownRating.leadership === 0 || breakDownRating.persuasion === 0) {
+        if (breakDownRating.teamwork === 0 || breakDownRating.creativity === 0 || breakDownRating.adaptability === 0 || breakDownRating.leadership === 0 || breakDownRating.persuasion === 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -256,8 +249,6 @@ export default function StudentEvaluation() {
                 userid: id
             });
 
-          
-
             let reviewCount = stud.studentInfo.review + 1;
             let totalRateCount = stud.studentInfo.rate + breakDownRating.averageRating;
 
@@ -268,10 +259,17 @@ export default function StudentEvaluation() {
 
             const docSnap = await getDoc(updateRef);
 
-            dispatch(updateStudentData(docSnap.data()));
-
-            window.location.reload(false);
-
+            Swal.fire({
+                icon: 'success',
+                title: 'Your Post has been saved',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    dispatch(updateStudentData(docSnap.data()));
+                    window.location.reload(false);
+                }
+            })
             setBreakDownRating({ ...breakDownRating, averageRating: 0, teamwork: 0, creativity: 0, adaptability: 0, leadership: 0, persuasion: 0 });
             setShowInputRating(false);
             setInputValue('');
@@ -284,7 +282,7 @@ export default function StudentEvaluation() {
                 <title>{stud.studentInfo.displayName}</title>
                 <meta
                     name="description"
-                    content="College of Information Technology and Engineering"
+                    content="Student Evaluation"
                 />
                 <meta property="og-title" content="dasdasda" />
                 <meta property="og-image" content={stud.studentInfo.photoURL} />
