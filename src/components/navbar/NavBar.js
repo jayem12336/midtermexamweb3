@@ -199,16 +199,7 @@ export default function NavBar({ tabvalue }) {
                 window.location.reload(false);
                 // ...
             }).catch((error) => {
-                // Handle Errors here.
-                const errorMessage = error.message;
-                alert(errorMessage);
-                // The email of the user's account used.
-                const email = error.email;
-                alert(email);
-                // The AuthCredential type that was used.
-                const credential = GoogleAuthProvider.credentialFromError(error);
-                // ...
-                alert(credential);
+                
             });
     }
 
