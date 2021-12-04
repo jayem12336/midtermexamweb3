@@ -204,6 +204,8 @@ export default function StudentEvaluation() {
 
     const colRef = collection(db, "studentlist", id, "post");
 
+    const updateRef = doc(db, "studentlist", id);
+
     const queryTimeStamp = query(colRef, orderBy("timestamp", "desc"));
 
     useEffect(() => {
@@ -245,15 +247,6 @@ export default function StudentEvaluation() {
                     + breakDownRating.persuasion)
                     / 5
                 )
-            const updateRef = doc(db, "studentlist", id);
-
-            let reviewCount = stud.studentInfo.review + 1;
-            let totalRateCount = stud.studentInfo.rate + breakDownRating.averageRating;
-            await updateDoc(updateRef, {
-                review: stud.studentInfo.review + 1,
-                rate: (totalRateCount / reviewCount),
-            });
-
             await addDoc(collection(db, "studentlist", id, "post"), {
                 post: inputValue,
                 email: userAuth.email,
@@ -263,16 +256,25 @@ export default function StudentEvaluation() {
                 userid: id
             });
 
+          
+
+            let reviewCount = stud.studentInfo.review + 1;
+            let totalRateCount = stud.studentInfo.rate + breakDownRating.averageRating;
+
+            await updateDoc(updateRef, {
+                review: reviewCount,
+                rate: totalRateCount,
+            });
+
             const docSnap = await getDoc(updateRef);
 
-            dispatch(updateStudentData(docSnap.data()))
+            dispatch(updateStudentData(docSnap.data()));
 
-            console.log(docSnap.data());
+            window.location.reload(false);
+
             setBreakDownRating({ ...breakDownRating, averageRating: 0, teamwork: 0, creativity: 0, adaptability: 0, leadership: 0, persuasion: 0 });
             setShowInputRating(false);
             setInputValue('');
-
-            window.location.reload(false);
         }
     }
 

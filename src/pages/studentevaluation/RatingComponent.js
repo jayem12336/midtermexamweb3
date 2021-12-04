@@ -105,15 +105,19 @@ export default function RatingComponent({ postemail, postrateaverage, post, time
 
     const queryTimeStamp = query(colRef, orderBy("timestamp", "desc"));
 
-    useEffect(
-        () =>
-            onSnapshot(queryTimeStamp, (snapshot) => {
-                setCommentList(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-                setTotalDoclNumbers(snapshot.docs.length);
-            }
-            ),
-        []
-    );
+
+
+    useEffect(() => {
+        const fetchBusinesses = onSnapshot(queryTimeStamp, (snapshot) => {
+            setCommentList(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+            setTotalDoclNumbers(snapshot.docs.length);
+        }
+
+        )
+
+        return fetchBusinesses();
+
+    }, [])
 
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
@@ -155,14 +159,27 @@ export default function RatingComponent({ postemail, postrateaverage, post, time
             <Box component={Grid} container justifyContent="flex-end" sx={{ marginTop: 3 }}>
                 <Button
                     sx={{ ...style.btnCommentReportStyle, ...style.marginStyle }}
-                    startIcon={<ChatBubbleOutlineIcon style={{ fontSize: 25 }} />}
+                    startIcon={<ChatBubbleOutlineIcon
+                        style={{
+                            fontSize: {
+                                xs: 12,
+                                md: 25
+                            }
+                        }}
+                    />}
                     onClick={() => setShowInput(!showInput)}
                 >
                     {totalDoclNumbers} comment
                 </Button>
                 <Button
                     sx={{ ...style.btnCommentReportStyle, ...style.marginStyle }}
-                    startIcon={<ErrorOutlineIcon style={{ fontSize: 25 }} />}
+                    startIcon={<ErrorOutlineIcon
+                        style={{
+                            fontSize: {
+                                xs: 12,
+                                md: 25
+                            }
+                        }} />}
                 >
                     Report
                 </Button>

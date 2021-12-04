@@ -134,6 +134,7 @@ export default function StudentList() {
         })
     }, [])
 
+
     return (
         <Box>
             <Box component={Grid} container justifyContent="flex-end">
@@ -193,15 +194,15 @@ export default function StudentList() {
                     <Box sx={style.bodyStyle} key={studentdata.id}>
                         <Box component={Grid} container justifyContent="flex-start">
                             <Typography sx={style.idStyle}> {count++} </Typography>
-                            <Avatar sx={style.avatarStyle} variant="square" src={studentdata.photoURL}/>
+                            <Avatar sx={style.avatarStyle} variant="square" src={studentdata.photoURL} />
                             <Typography sx={style.nameStyle} onClick={() => studInfoBtn(studentdata)}> {studentdata.displayName} </Typography>
                         </Box>
-                        <Box component={Grid} container justifyContent="flex-end" 
-                        sx={{
-                            marginRight: {
-                                xs: -5
-                            }
-                        }}
+                        <Box component={Grid} container justifyContent="flex-end"
+                            sx={{
+                                marginRight: {
+                                    xs: -5
+                                }
+                            }}
                         >
                             <Typography sx={style.sectionStyle}> {studentdata.section} </Typography>
                         </Box>
@@ -210,8 +211,9 @@ export default function StudentList() {
                         </Box>
                         <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
                             <Rating
+                                precision={0.5}
                                 name="simple-controlled"
-                                value={studentdata.rate}
+                                value={studentdata.rate / studentdata.review}
                                 readOnly
                                 sx={{ color: (theme) => theme.colors.navButtonHover }}
                             />

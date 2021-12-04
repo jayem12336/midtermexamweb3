@@ -141,7 +141,7 @@ export default function StudentInfo() {
 
     const { stud } = useSelector((state) => state);
 
-    const rate = stud.studentInfo.rate;
+    const rate = stud.studentInfo.rate / stud.studentInfo.review;
     return (
         <Box>
             <Box style={style.floatChild}
@@ -158,14 +158,14 @@ export default function StudentInfo() {
                         <Rating
                             precision={0.5}
                             name="simple-controlled"
-                            value={stud.studentInfo.rate}
+                            value={rate}
                             sx={{ color: (theme) => theme.colors.navButtonHover, marginTop: 2, fontSize: 40 }}
                             readOnly
                         />
                     </Box>
                 </Box>
                 <Box component={Grid} container justifyContent="center">
-                    <Typography sx={style.textStyle}> {Number(rate).toFixed(2)} Overall Rating </Typography>
+                    <Typography sx={style.textStyle}> {!rate ? "0" : Number(rate).toFixed(2)} Overall Rating </Typography>
                     <Typography sx={{ ...style.textStyle, ...style.marginTextLeft }}> {stud.studentInfo.review} Reviews </Typography>
                 </Box>
             </Box>

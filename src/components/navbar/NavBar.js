@@ -27,7 +27,6 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import SearchIcon from '@mui/icons-material/Search';
 
 import accountprofile from '../../assets/img/png/accountcircle.png';
-import GoogleIcon from '@mui/icons-material/Google';
 
 import SideDrawer from './drawerComponent/SideDrawer';
 
@@ -40,6 +39,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useHistory } from 'react-router-dom';
 import { logoutInitiate } from '../../redux/actions/userAction';
 import { auth } from '../../utils/firebase';
+import googleLogo from '../../assets/img/png/googleLogo.jpg'
 
 const style = {
     accountButton: {
@@ -120,7 +120,7 @@ const style = {
     indicator: {
         top: "0px",
         maxWidth: 30,
-        marginLeft:9.5
+        marginLeft: 9.5
     },
 
 };
@@ -322,11 +322,11 @@ export default function NavBar({ tabvalue }) {
                                         marginLeft: 2,
                                         cursor: "pointer",
                                         marginTop: 2
-                                    }}
-                                        onClick={btnSignInWithGoogle}>
-                                        <GoogleIcon color="#FFFFFF" />
-                                    </Avatar>
 
+                                    }}
+                                        src={googleLogo}
+                                        onClick={btnSignInWithGoogle}
+                                    />
                                 </Box>
                             </Box>
                         </Menu>
