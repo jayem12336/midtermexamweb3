@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from '../../components/navbar/NavBar';
+import { Helmet } from 'react-helmet'
 
 import {
     Box,
@@ -7,12 +8,14 @@ import {
     Grid,
 } from '@mui/material';
 
+import { onSnapshot, collection, limit, orderBy, query } from 'firebase/firestore';
+
+import { db } from '../../utils/firebase';
+
 import TopStudent from './TopStudents';
 
 import StudentList from './StudentList';
 import Footer from '../../components/footer/Footer';
-
-import { useSelector } from 'react-redux';
 
 const style = {
     section1: {
@@ -42,42 +45,46 @@ const style = {
 }
 export default function Home() {
 
+    const [fetchStudent, setFetchStudent] = useState([]);
+
+    const colRef = collection(db, "studentlist");
+
+    const queryRate = query(colRef, orderBy("rate", "desc"), limit(4));
+
+    useEffect(() => {
+        onSnapshot(queryRate, (snapshot) => {
+            setFetchStudent(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+        })
+    }, [])
+
     return (
         <Box>
+            <Helmet>
+                <title>Student List</title>
+                <meta
+                    name="description"
+                    content="College of Information Technology and Engineering"
+                />
+            </Helmet>
             <NavBar tabvalue={'one'} />
             <Box component={Grid} container justifyContent="center" sx={style.section1}>
                 <Box component={Grid} container sx={{ width: 1200 }} justifyContent="center">
                     <Box component={Grid} container sx={style.titleStyle}>
                         <Typography variant="h5" color="textPrimary"> Top Students </Typography>
                     </Box>
-                    <Grid item sx={style.columnContainer}>
-                        <TopStudent
-                            studName="Jomari"
-                            numReviews="30"
-                            numRating={2}
-                        />
-                    </Grid>
-                    <Grid item sx={style.columnContainer}>
-                        <TopStudent
-                            studName="Nico"
-                            numReviews="20"
-                            numRating={2}
-                        />
-                    </Grid>
-                    <Grid item sx={style.columnContainer}>
-                        <TopStudent
-                            studName="Aldrin"
-                            numReviews="30"
-                            numRating={2}
-                        />
-                    </Grid>
-                    <Grid item sx={style.columnContainer}>
-                        <TopStudent
-                            studName="Jarvis"
-                            numReviews="30"
-                            numRating={2}
-                        />
-                    </Grid>
+                    {
+                        fetchStudent.map((student) => (
+                            <Grid item sx={style.columnContainer}>
+                                <TopStudent
+                                    key={student.id}
+                                    studPhoto={student.photoURL}
+                                    studName={student.displayName}
+                                    numReviews={student.review}
+                                    numRating={student.rate}
+                                />
+                            </Grid>
+                        ))
+                    }
                 </Box>
             </Box>
             <Box component={Grid} container justifyContent="center" sx={style.section2}>

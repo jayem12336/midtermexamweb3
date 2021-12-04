@@ -19,7 +19,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useHistory } from 'react-router';
 
 import Rating from '@mui/material/Rating';
-import { toggleStudentData, toggleStudentListData } from '../../redux/actions/studentAction';
+import { toggleStudentData } from '../../redux/actions/studentAction';
 
 import { onSnapshot, collection } from 'firebase/firestore';
 
@@ -132,9 +132,6 @@ export default function StudentList() {
             setFetchStudent(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
             setLoading(false);
         })
-        return () => {
-            setFetchStudent({}); // This worked for me
-        };
     }, [])
 
     return (
@@ -158,7 +155,7 @@ export default function StudentList() {
                     <Typography sx={{
                         color: "#62666D",
                         marginLeft: {
-                            xs: 20,
+                            xs: 7,
                             md: 0
                         },
                         marginRight: {
@@ -170,12 +167,15 @@ export default function StudentList() {
                         marginRight: {
                             xs: 2,
                             md: 7
+                        },
+                        marginLeft: {
+                            xs: 2
                         }
                     }}>Reviews</Typography>
                     <Typography sx={{
                         color: "#62666D",
                         marginRight: {
-                            xs: 9,
+                            xs: 7,
                             md: 7
                         }
                     }}>Rating</Typography>
@@ -196,7 +196,13 @@ export default function StudentList() {
                             <Avatar sx={style.avatarStyle} variant="square" src={studentdata.photoURL}/>
                             <Typography sx={style.nameStyle} onClick={() => studInfoBtn(studentdata)}> {studentdata.displayName} </Typography>
                         </Box>
-                        <Box component={Grid} container justifyContent="flex-end">
+                        <Box component={Grid} container justifyContent="flex-end" 
+                        sx={{
+                            marginRight: {
+                                xs: -5
+                            }
+                        }}
+                        >
                             <Typography sx={style.sectionStyle}> {studentdata.section} </Typography>
                         </Box>
                         <Box component={Grid} container justifyContent="flex-end">

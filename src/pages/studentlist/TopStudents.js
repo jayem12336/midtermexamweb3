@@ -20,7 +20,7 @@ const style = {
         border: '1px solid #2e2c2c'
     },
 }
-export default function TopStudents( {studName, numReviews, numRating}) {
+export default function TopStudents( {studName, numReviews, numRating, studPhoto}) {
 
     const [value, setValue] = React.useState(numRating);
     
@@ -30,7 +30,7 @@ export default function TopStudents( {studName, numReviews, numRating}) {
                 <CardContent>
                     <Box sx={{ display: "flex" }}>
                         <Box>
-                            <Avatar src="" alt="" variant="square"
+                            <Avatar src={studPhoto} alt="" variant="square"
                                 sx={{
                                     marginRight: 2,
                                     height: 50,

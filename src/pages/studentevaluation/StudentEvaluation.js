@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import NavBar from '../../components/navbar/NavBar'
+import React, { useState, useEffect } from 'react';
+import NavBar from '../../components/navbar/NavBar';
 
 import {
     Box,
@@ -29,8 +29,8 @@ import { doc, onSnapshot, collection, addDoc, updateDoc, orderBy, query, getDoc 
 
 import RatingComponent from './RatingComponent';
 
-import { useHistory } from 'react-router';
-import { toggleStudentData } from '../../redux/actions/studentAction';
+import { updateStudentData } from '../../redux/actions/studentAction';
+import { Helmet } from 'react-helmet';
 
 const style = {
     //helper
@@ -177,8 +177,6 @@ const style = {
 }
 export default function StudentEvaluation() {
 
-    const history = useHistory();
-
     const dispatch = useDispatch();
 
     const [showInputRating, setShowInputRating] = useState(false)
@@ -206,7 +204,7 @@ export default function StudentEvaluation() {
 
     const colRef = collection(db, "studentlist", id, "post");
 
-    const q = query(colRef, orderBy("timestamp", "desc"));
+    const queryTimeStamp = query(colRef, orderBy("timestamp", "desc"));
 
     useEffect(() => {
         auth.onAuthStateChanged((authUser) => {
@@ -215,16 +213,12 @@ export default function StudentEvaluation() {
     }, [])
 
     useEffect(() => {
-        onSnapshot(q, (snapshot) => {
+        onSnapshot(queryTimeStamp, (snapshot) => {
             setPost(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
             setLoading(false);
         }
         )
-        return () => {
-            setPost({}); // This worked for me
-        };
     }, [])
-
 
     const userPost = async () => {
         if (inputValue === "") {
@@ -252,12 +246,15 @@ export default function StudentEvaluation() {
                     / 5
                 )
             const updateRef = doc(db, "studentlist", id);
+
+            let reviewCount = stud.studentInfo.review + 1;
+            let totalRateCount = stud.studentInfo.rate + breakDownRating.averageRating;
             await updateDoc(updateRef, {
                 review: stud.studentInfo.review + 1,
-                rate: (stud.studentInfo.rate + breakDownRating.averageRating) / (stud.studentInfo.review) ,
+                rate: (totalRateCount / reviewCount),
             });
 
-            const docRef = await addDoc(collection(db, "studentlist", id, "post"), {
+            await addDoc(collection(db, "studentlist", id, "post"), {
                 post: inputValue,
                 email: userAuth.email,
                 averagerating: breakDownRating.averageRating,
@@ -265,21 +262,31 @@ export default function StudentEvaluation() {
                 timestamp: new Date(),
                 userid: id
             });
+
             const docSnap = await getDoc(updateRef);
 
+            dispatch(updateStudentData(docSnap.data()))
+
             console.log(docSnap.data());
-            Swal.fire({
-                icon: 'success',
-                title: 'Your work has been saved',
-            })
             setBreakDownRating({ ...breakDownRating, averageRating: 0, teamwork: 0, creativity: 0, adaptability: 0, leadership: 0, persuasion: 0 });
             setShowInputRating(false);
             setInputValue('');
+
+            window.location.reload(false);
         }
     }
 
     return (
         <Box>
+            <Helmet>
+                <title>{stud.studentInfo.displayName}</title>
+                <meta
+                    name="description"
+                    content="College of Information Technology and Engineering"
+                />
+                <meta property="og-title" content="dasdasda" />
+                <meta property="og-image" content={stud.studentInfo.photoURL} />
+            </Helmet>
             <NavBar tabvalue={'two'} />
             <Box component={Grid} container justifyContent="center" sx={style.section1}>
                 <Box sx={style.studInfoContainer}>
@@ -292,7 +299,6 @@ export default function StudentEvaluation() {
                     <Box component={Grid} container justifyContent="center">
                         <Rating
                             name="simple-controlled"
-                            value={breakDownRating.averageRating}
                             precision={0.5}
                             sx={{ color: (theme) => theme.colors.navButtonHover, marginTop: 4, fontSize: 50 }}
                             onChange={(event, newValue) => {

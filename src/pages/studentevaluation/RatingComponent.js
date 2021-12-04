@@ -8,26 +8,19 @@ import {
     Rating,
     Button,
     TextField,
-    LinearProgress
 } from '@mui/material';
 
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { BiShare } from 'react-icons/bi';
-
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import StudentInfo from './StudentInfo';
-
 import moment from 'moment';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { auth, db } from '../../utils/firebase';
 
 import Swal from 'sweetalert2';
 
-import { doc, onSnapshot, collection, addDoc, updateDoc, query, where, orderBy } from '@firebase/firestore';
+import { onSnapshot, collection, addDoc, query, orderBy } from '@firebase/firestore';
 
 const style = {
     marginStyle: {
@@ -88,9 +81,9 @@ export default function RatingComponent({ postemail, postrateaverage, post, time
 
     const [userAuth, setUserAuth] = useState("");
 
-    const [comment, setComment] = useState("");
-
-    const [loading, setLoading] = useState(true);
+    const [values, setValues] = useState({
+        comment: '',
+    });
 
     const [commentList, setCommentList] = useState([]);
 
@@ -110,35 +103,34 @@ export default function RatingComponent({ postemail, postrateaverage, post, time
 
     const colRef = collection(db, "studentlist", id, "post", postid, "comment");
 
-    const q = query(colRef, orderBy("timestamp", "desc"));
+    const queryTimeStamp = query(colRef, orderBy("timestamp", "desc"));
 
     useEffect(
         () =>
-            onSnapshot(q, (snapshot) => {
+            onSnapshot(queryTimeStamp, (snapshot) => {
                 setCommentList(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
                 setTotalDoclNumbers(snapshot.docs.length);
             }
             ),
-        [id, postid]
+        []
     );
 
-
-    //const docRef = await addDoc(collection(db, "users", id, "post", "comments"),
+    const handleChange = (prop) => (event) => {
+        setValues({ ...values, [prop]: event.target.value });
+    };
     const userComment = async () => {
-        const docRef = await addDoc(collection(db, "studentlist", id, "post", postid, "comment"), {
-            text: comment,
+        await addDoc(collection(db, "studentlist", id, "post", postid, "comment"), {
+            text: values.comment,
             email: userAuth.email,
             photoURL: userAuth.photoURL,
             timestamp: new Date(),
         });
-
-
-        console.log("Document written with ID: ", docRef.id);
-
+        setValues({ ...values, comment: "" });
         Swal.fire({
             icon: 'success',
-            title: 'Your comment has been saved',
+            title: 'Your Comment has been saved',
         })
+
 
     }
 
@@ -184,7 +176,8 @@ export default function RatingComponent({ postemail, postrateaverage, post, time
                             <TextField
                                 id="outlined-basic"
                                 fullWidth
-                                onChange={(e) => setComment(e.target.value)}
+                                value={values.comment}
+                                onChange={handleChange('comment')}
                                 sx={{
                                     backgroundColor: '#131414',
                                     borderRadius: 3
@@ -194,7 +187,7 @@ export default function RatingComponent({ postemail, postrateaverage, post, time
                         </Grid>
                         <Grid item xs={2}>
                             <Grid container justifyContent="center" sx={{ paddingTop: 1 }}>
-                                <Button variant="contained" disabled={!comment} sx={style.submitBtn} onClick={userComment}>Submit</Button>
+                                <Button variant="contained" disabled={!values.comment} sx={style.submitBtn} onClick={userComment}>Submit</Button>
                             </Grid>
                         </Grid>
                     </Box>

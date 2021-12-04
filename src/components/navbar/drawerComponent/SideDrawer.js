@@ -20,17 +20,24 @@ import SmartDisplayIcon from '@mui/icons-material/SmartDisplay';
 const style = {
     menuIconContainer: {
         marginLeft: 'auto',
-        
     },
     icons: {
         fontSize: '1.5rem',
         marginTop: "5px",
         marginLeft: "15px",
-        marginRight: "20px"
+        marginRight: "20px",
+        color: "white"
     },
     iconStyle: {
         color: "white",
         fontSize: 35
+    },
+    paper: {
+        backgroundColor: (theme) => theme.palette.background.default,
+        height: "100%"
+    },
+    textStyle: {
+        color: (theme) => theme.colors.textColor
     }
 };
 
@@ -44,15 +51,14 @@ export default function SideDrawer() {
                 anchor='right'
                 onClose={() => setOpenDrawer(false)}
                 open={openDrawer}
-
             >
-                <List>
+                <List sx={style.paper}>
                     <ListItem
                         button
                     >
                         <ListItemIcon>
                             <ListAltIcon sx={style.icons} />
-                            <ListItemText>Student List</ListItemText>
+                            <ListItemText sx={style.textStyle}>Student List</ListItemText>
                         </ListItemIcon>
                     </ListItem>
                     <ListItem
@@ -60,7 +66,7 @@ export default function SideDrawer() {
                     >
                         <ListItemIcon>
                             <AssignmentIndIcon sx={style.icons} />
-                            <ListItemText>Student Evaluation</ListItemText>
+                            <ListItemText sx={style.textStyle}>Student Evaluation</ListItemText>
                         </ListItemIcon>
                     </ListItem>
                     <ListItem
@@ -68,7 +74,7 @@ export default function SideDrawer() {
                     >
                         <ListItemIcon>
                             <SmartDisplayIcon sx={style.icons} />
-                            <ListItemText>Blog</ListItemText>
+                            <ListItemText sx={style.textStyle}>Blog</ListItemText>
                         </ListItemIcon>
                     </ListItem>
                 </List>
