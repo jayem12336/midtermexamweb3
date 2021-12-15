@@ -53,9 +53,12 @@ const style = {
     },
     passRateStyle: {
         backgroundColor: '#26CE8D',
-        borderRadius: 3,
+        borderRadius: 2,
+        paddingTop: 0.4,
         marginTop: -1,
         height: 30,
+        width: 40,
+        textAlign: "center",
         marginBottom: 1,
         "&:hover": {
             backgroundColor: '#26CE8D'
@@ -63,9 +66,12 @@ const style = {
     },
     notPassRateStyle: {
         backgroundColor: '#E03E65',
-        borderRadius: 3,
+        borderRadius: 2,
+        paddingTop: 0.4,
         marginTop: -1,
         height: 30,
+        width: 40,
+        textAlign: "center",
         marginBottom: 1,
         "&:hover": {
             backgroundColor: '#E03E65'
@@ -178,77 +184,125 @@ export default function StudentInfo() {
                     <Box component={Grid} container justifyContent="flex-start">
                         <Typography variant="body2" color="textPrimary"> Gender: </Typography>
                     </Box>
-                    <Box component={Grid} container justifyContent={{ md: "flex-end", xs: "flex-start" }}>
+                    <Box component={Grid} container justifyContent={{ md: "flex-end", xs: "flex-start" }} sx={{ marginLeft: -3 }}>
                         <Typography sx={{
                             color: "#62666D",
                             fontSize: 15,
                             marginLeft: {
-                                xs: 2,
-                                md: 2
-                            }
+                                xs: 12,
+                                md: 0
+                            },
+                            marginRight: { xs: 0, md: -3.5 }
                         }}>{stud.studentInfo.gender}</Typography>
                     </Box>
-                    <Box component={Grid} container justifyContent="flex-end">
-                        <Typography variant="body2" color="textPrimary" sx={{ marginLeft: { xs: 9, md: 8 } }}>  Teamwork: </Typography>
+                    <Box component={Grid} container justifyContent="flex-end" sx={{ marginLeft: 3 }}>
+                        <Typography variant="body2" color="textPrimary" sx={{
+                            marginLeft: { xs: 4, md: 8 },
+                            marginRight: {
+                                xs: 0.5, md: 0
+                            }
+                        }}>  Teamwork: </Typography>
                     </Box>
                     <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                        <Button variant="outlined" sx={style.passRateStyle}>4.0</Button>
+                        <Box sx={style.passRateStyle}>4.0</Box>
                     </Box>
                 </Box>
                 <Box sx={style.bodyStyle}>
                     <Box component={Grid} container justifyContent="flex-start">
                         <Typography variant="body2" color="textPrimary"> Birthday: </Typography>
                     </Box>
-                    <Box component={Grid} container justifyContent={{ md: "flex-end", xs: "flex-start" }}>
+                    <Box component={Grid}
+                        container
+                        justifyContent={{ md: "flex-end", xs: "flex-start" }}
+                        sx={{
+                            marginLeft: { xs: 2, md: 0 }
+                        }}>
                         <Typography sx={style.sectionStyle}>{stud.studentInfo.birthday}</Typography>
                     </Box>
                     <Box component={Grid} container justifyContent="flex-end">
-                        <Typography variant="body2" color="textPrimary" sx={{ marginLeft: { xs: 6.5, md: 8 } }}>Creativity: </Typography>
+                        <Typography variant="body2" color="textPrimary" sx={{
+                            marginLeft: { xs: 2, md: 7 },
+                            marginRight: {
+                                xs: -2.2, md: 0
+                            }
+                        }}>Creativity: </Typography>
                     </Box>
                     <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                        <Button variant="outlined" sx={style.passRateStyle}>3.0</Button>
+                        <Box sx={style.passRateStyle}>3.0</Box>
                     </Box>
                 </Box>
                 <Box sx={style.bodyStyle}>
                     <Box component={Grid} container justifyContent="flex-start">
                         <Typography variant="body2" color="textPrimary"> Address: </Typography>
                     </Box>
-                    <Box component={Grid} container justifyContent={{ md: "flex-end", xs: "flex-start" }}>
+                    <Box component={Grid} container justifyContent="flex-end"
+                        sx={{
+                            marginLeft: {
+                                xs: -2, md: 4
+                            },
+                            marginRight: { xs: -6, md: 0 }
+                        }}>
                         <Typography sx={style.sectionStyle}>{stud.studentInfo.address}</Typography>
                     </Box>
                     <Box component={Grid} container justifyContent="flex-end">
-                        <Typography variant="body2" color="textPrimary" sx={{ marginLeft: { xs: 5, md: 7 } }}>Adaptability: </Typography>
+                        <Typography variant="body2" color="textPrimary"
+                            sx={{
+                                marginLeft: {
+                                    xs: 0, md: 8
+                                },
+                                marginRight: {
+                                    xs: -4.8, md: 0
+                                }
+                            }}>Adaptability: </Typography>
                     </Box>
                     <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                        <Button variant="outlined" sx={style.notPassRateStyle}>1.0</Button>
+                        <Box sx={style.notPassRateStyle}>1.0</Box>
                     </Box>
                 </Box>
                 <Box sx={style.bodyStyle}>
                     <Box component={Grid} container justifyContent="flex-start">
                         <Typography variant="body2" color="textPrimary"> Nickname: </Typography>
                     </Box>
-                    <Box component={Grid} container justifyContent={{ md: "flex-end", xs: "flex-start" }}>
+                    <Box component={Grid} container justifyContent={{ md: "flex-end", xs: "flex-start" }} sx={{
+                        marginLeft: {
+                            xs: 6, md: 2,
+
+                        }
+                    }}>
                         <Typography sx={style.sectionStyle}>{stud.studentInfo.nickname}</Typography>
                     </Box>
-                    <Box component={Grid} container justifyContent="flex-end">
-                        <Typography variant="body2" color="textPrimary" sx={{ marginLeft: 7 }}>Leadership: </Typography>
+                    <Box component={Grid} container justifyContent="flex-end" sx={{
+                        marginLeft: {
+                            xs: 0, md: 2
+                        }
+                    }}>
+                        <Typography variant="body2" color="textPrimary" sx={{
+                            marginLeft: 2,
+                            marginRight: {
+                                xs: -1.2, md: 0
+                            }
+                        }}>Leadership: </Typography>
                     </Box>
                     <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                        <Button variant="outlined" sx={style.notPassRateStyle}>2.0</Button>
+                        <Box sx={style.notPassRateStyle}>2.0</Box>
                     </Box>
                 </Box>
                 <Box sx={style.bodyStyle}>
                     <Box component={Grid} container justifyContent="flex-start">
                         <Typography variant="body2" color="textPrimary"> Skills / Languages: </Typography>
                     </Box>
-                    <Box component={Grid} container justifyContent={{ md: "flex-end", xs: "flex-start" }}>
-                        <Typography sx={style.sectionStyle}> Javascript, Python </Typography>
+                    <Box component={Grid} container justifyContent={{ md: "flex-end", xs: "flex-start" }}
+                        sx={{ marginLeft: { xs: 5, md: 0 } }}>
+                        <Typography sx={style.sectionStyle}>{stud.studentInfo.skills}</Typography>
                     </Box>
                     <Box component={Grid} container justifyContent="flex-end">
-                        <Typography variant="body2" color="textPrimary" sx={{ marginLeft: 7 }}>Persuasion: </Typography>
+                        <Typography variant="body2" color="textPrimary" sx={{
+                            marginLeft: { xs: 3.8, md: 8 },
+
+                        }}>Persuasion: </Typography>
                     </Box>
-                    <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7 }}>
-                        <Button variant="outlined" sx={style.passRateStyle}>3.0</Button>
+                    <Box component={Grid} container justifyContent="flex-end" sx={{ paddingTop: 0.7, marginLeft: -1 }}>
+                        <Box sx={style.passRateStyle}>3.0</Box>
                     </Box>
                 </Box>
                 <Box sx={style.footerStyle}>

@@ -14,7 +14,7 @@ import Rating from '@mui/material/Rating';
 
 const style = {
     cardStyle: {
-        width: 250,
+        width: 249,
         borderRadius: 2,
         backgroundColor: (theme) => theme.colors.cardColor,
         border: '1px solid #2e2c2c'
@@ -55,6 +55,7 @@ export default function TopStudents( {studName, numReviews, numRating, studPhoto
                             onChange={(event, newValue) => {
                                 setValue(newValue);
                             }}
+                            readOnly
                         />
                     </Box>
                 </CardContent>

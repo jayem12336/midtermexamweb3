@@ -125,10 +125,6 @@ export default function RatingComponent({ postemail, postrateaverage, post, time
             timestamp: new Date(),
         });
         setValues({ ...values, comment: "" });
-        Swal.fire({
-            icon: 'success',
-            title: 'Your Comment has been saved',
-        })
     }
 
     return (

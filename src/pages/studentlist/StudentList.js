@@ -32,7 +32,7 @@ const style = {
     },
     btnFilterStyle: {
         marginTop: -1,
-        marginLeft: 1,
+        marginLeft: .5,
         color: (theme) => theme.colors.textColor,
         textTransform: 'none',
         fontWeight: '50',
@@ -80,7 +80,7 @@ const style = {
     },
     sectionStyle: {
         color: "#62666D",
-        fontSize: 20,
+        fontSize: 16,
         paddingRight: 1,
         paddingTop: 0.4,
 
@@ -157,7 +157,7 @@ export default function StudentList() {
                         color: "#62666D",
                         marginLeft: {
                             xs: 7,
-                            md: 0
+                            md: 2
                         },
                         marginRight: {
                             md: 7
@@ -177,7 +177,7 @@ export default function StudentList() {
                         color: "#62666D",
                         marginRight: {
                             xs: 7,
-                            md: 7
+                            md: 10
                         }
                     }}>Rating</Typography>
                 </Box>
@@ -189,7 +189,7 @@ export default function StudentList() {
                 (
                     ""
                 )}
-            <Box component={Grid} container justifyContent='center' sx={{ paddingTop: 2, paddingLeft: 2, paddingRight: 2 }}>
+            <Box component={Grid} container justifyContent='center' sx={{ paddingTop: 2 }}>
                 {fetchStudent.map((studentdata) => (
                     <Box sx={style.bodyStyle} key={studentdata.id}>
                         <Box component={Grid} container justifyContent="flex-start">

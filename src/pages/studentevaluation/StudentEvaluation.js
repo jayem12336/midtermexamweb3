@@ -302,9 +302,10 @@ export default function StudentEvaluation() {
                             precision={0.5}
                             sx={{ color: (theme) => theme.colors.navButtonHover, marginTop: 4, fontSize: 50 }}
                             onChange={(event, newValue) => {
-                                setBreakDownRating({ ...breakDownRating, averageRating: newValue });
+                                setBreakDownRating({ ...breakDownRating, averageHolder: newValue });
                                 setShowInputRating(!showInputRating);
                             }}
+                            value={(breakDownRating.teamwork + breakDownRating.creativity + breakDownRating.adaptability + breakDownRating.leadership + breakDownRating.persuasion) / 5}
                             readOnly={!userAuth ? true : false}
                         />
                     </Box>
